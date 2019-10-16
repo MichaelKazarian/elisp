@@ -22,12 +22,6 @@
   :safe 'integerp
   :group 'lesson-mode)
 
-(defcustom my-word-preview-time 3
-  "Word preview time"
-  :type 'integer
-  :safe 'integerp
-  :group 'lesson-mode)
-
 (defun lang-delimiter-position (str)
   (string-match ";" str))
 
@@ -86,19 +80,15 @@ number. If question found send message after `my-message-time-delay' sec."
   (next-window 1))
 
 (defun word-send-to-slide ()
-  "Temporary send current word to slide buffer and switch to it.
-
-Clear this line after `my-word-preview-time and switch to previous buffer."
+  "Send current word to slide buffer and switch to it"
   (interactive)
   (let* ((str (word-at-point)))
     (with-current-buffer "slide"
       (progn
-      (insert (concat "\n~" str "~"))
-      (end-of-line)
-      (sit-for my-word-preview-time)
-      (clear-line-go-to-lesson)
-      (other-window 1)
-      ))))
+      (insert (concat "\n" str))
+      (end-of-line))))
+  (lesson-switch-to-lesson)
+  (next-window 1))
 
 (defun clear-line-go-to-lesson ()
   "Clear current line and return to previous window"
@@ -128,11 +118,78 @@ If slide buffer is active switch to lesson buffer an search new question"
           (funcall 'my-lesson-mode)
           (text-scale-set 3)
           ;(text-scale-adjust 1)
-          )))
-    (split-window-right)
-    (switch-to-buffer-other-window slide-name)
-    (enlarge-window-horizontally 35)
-    (other-window 1)))
+          )
+        (split-window-right)
+        (switch-to-buffer-other-window slide-name)
+        (enlarge-window-horizontally 35)))))
+
+(defun lesson-to-json ()
+  (interactive)
+  (let ((from-file (read-file-name "To json:" (buffer-file-name)))
+         (to-file (read-file-name "Save to:" nil nil nil (concat (file-name-sans-extension (buffer-name)) ".json"))))
+         (message to-file)
+         (setq input-lines (read-json from-file))
+         (write-json input-lines to-file)
+         (find-file to-file)
+         ))
+
+(defun read-json (file)
+  (split-string
+          (with-temp-buffer
+           (insert-file-contents file)
+           (buffer-substring-no-properties
+            (point-min)
+            (point-max)))
+          "\n" t))
+
+(defun write-json (lines file)
+  (setq header "{
+  \"lessonId\": \"lesson\",
+  \"lessonTitle\": \"Урок \",
+  \"lessonDescription\": \" \",
+  \"lessonURL\": \"bJkSM3g-Tfs\",
+  \"lessonItems\": [")
+  (setq footer "\n  ]\n}\n")
+  (setq point "\n    {
+      \"itemType\": \"point\",
+      \"itemText\": \"%s\",
+      \"startTime\": \":\"
+    },")
+  (setq question "\n    {
+      \"itemType\": \"question\",
+      \"question\": \"\",
+      \"answer\":   \"%s\",
+      \"startTime\": :
+    },")
+  (with-temp-file file
+    (insert header)
+    (setq item-type point)
+    (dolist (line lines)
+      (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " line)
+          (setq item-type question))
+      (insert (format
+               item-type
+               (replace-org-to-html line))))
+    (insert footer))
+  )
+
+(defun replace-org-to-html (str)
+  (let* ((pattern "[/_\\*]\\(.+\\)[/_\\*]")
+         (found (string-match pattern str)))
+    (if (null found)
+        str
+      (progn
+        (setq tag  (substring str found (+ found 1)))
+        (message tag)
+        (setq t-s "") (setq t-e "")
+        (cond ((equal "*" tag) (setq t-s "<b>") (setq t-e "</b>"))
+              ((equal "_" tag) (setq t-s "<u>") (setq t-e "</u>"))
+              ((equal "/" tag) (setq t-s "<i>") (setq t-e "</i>")))
+        (mapconcat
+         'identity (split-string str pattern)
+         (concat t-s (match-string 1 str) t-e)))
+      ))
+  )
 
 (defun s ()
   "Setup `org-mode' for lesson"
@@ -142,19 +199,13 @@ If slide buffer is active switch to lesson buffer an search new question"
   (olivetti-mode -1)
   (setq org-hide-emphasis-markers t)
   (load-theme 'dichromacy t)
-
   ;; make part of a word bold
   ;; https://stackoverflow.com/posts/24540651/revisions
   (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
   (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
   (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
   ;;
-  (set-frame-size (selected-frame) 150 60)
-  (set-face-attribute 'org-level-2 nil :foreground "DarkGreen")
-  (add-to-list 'org-emphasis-alist
-             '("~" (:foreground "OrangeRed")
-               ))
-  )
+  (set-frame-size (selected-frame) 150 60))
 
 (defun my-lesson-mode-version ()
   "Show the `my-lesson-mode' version in the echo area."
