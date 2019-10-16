@@ -1,0 +1,42 @@
+;; Init file for custom settings
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+
+
+;; My personal info
+;(setq frame-title-format "emacs@Michael.Kazarian")
+;(setq user-full-name "Michael Kazarian")
+;(setq my-author-name (getenv "USER"))
+;(setq user-full-name (getenv "USER"))
+
+(add-to-list 'load-path "~/elisp/mode")
+(add-to-list 'load-path "~/elisp/rc")
+(load "~/elisp/rc/editing.el")
+(load "~/elisp/rc/screen.el")
+(load "~/elisp/rc/vcs.el")
+;; programming tools & languages
+(load "~/elisp/rc/lisp.el")
+(load "~/elisp/rc/tags.el")
+(load "~/elisp/rc/rc-cedet.el")
+(load "~/elisp/rc/rc-ecb.el")
+(load "~/elisp/rc/ispell.el")
+(load "~/elisp/rc/rc-eshell.el")
+(load "~/elisp/rc/rc-nxml.el")
+(load "~/elisp/rc/rc-python.el")
+(load "~/elisp/rc/java.el")
+(load "~/elisp/rc/markdown.el")
+(load "~/elisp/rc/org.el")
+
+;; others tools
+(load "~/elisp/rc/auto-insert.el")
+(load "~/elisp/rc/backup.el")
+(load "~/elisp/rc/savehistory")
+(load "~/elisp/rc/kbd.el")
+(load "~/elisp/rc/rc-company.el")
+(load "~/elisp/rc/google.el")
+(load "~/elisp/rc/nov.el")
