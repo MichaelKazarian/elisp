@@ -1,2 +1,3 @@
 After clone execute:
-      ln ~/elisp/dot-emacs ~/.emacs
+
+    ln ~/elisp/dot-emacs ~/.emacs
