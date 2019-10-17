@@ -6,7 +6,8 @@
 ;;
 (defun my-java-mode-hook ()
   ;; (local-set-key (kbd "RET") 'newline-and-indent)
-  (linum-mode 1)
+  ;; (linum-mode 1)
+  (display-line-numbers-mode)
   (setq tab-width 2)
   (hs-minor-mode)
   (setq c-basic-offset 2)

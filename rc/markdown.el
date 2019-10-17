@@ -37,7 +37,8 @@
             (local-set-key "\C-c;" 'comment-or-uncomment-region)
             (electric-pair-mode)
             (outline-minor-mode 1)
-            (linum-mode 1)
+            ;; (linum-mode 1)
+            (display-line-numbers-mode)
             (whitespace-mode 1)
             ))
 

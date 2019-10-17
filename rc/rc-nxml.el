@@ -28,7 +28,8 @@
   (setq tab-width 2)
   (set 'ecb-layout-name"left5")
   ;; (ecb-layout-function-
-  (linum-mode 1))
+  ; (linum-mode 1)
+  (display-line-numbers-mode))
 
 (add-hook 'web-mode-hook  'my-web-mode-hook)
 

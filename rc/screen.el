@@ -8,6 +8,9 @@
 (setq column-number-mode t)
 ;;Line numbering
 (setq line-number-mode t)
+
+;; (when (version<= "26.0.50" emacs-version )
+;;   (global-display-line-numbers-mode))
 ;(global-linum-mode 1)
 
 ;;Scroll
