@@ -26,11 +26,18 @@
   :type 'integer
   :safe 'integerp
   :group 'lesson-mode)
+
+(defcustom answer-question-delimiter ";"
+  "Question-answer delimiter. Answer is first."
+  :type 'string
+  :group 'lesson-mode)
+
 ;;
 ;; Core
 ;;
 (defun lang-delimiter-position (str)
-  (string-match ";" str))
+  "Returns `answer-question-delimiter' position if presents; nil otherwise"
+  (string-match answer-question-delimiter str))
 
 (defun answer-message ()
   "Hint to say answer and publish it in the slide"
@@ -158,16 +165,20 @@ If slide buffer is active switch to lesson buffer an search new question"
 ;; orgl to json converter
 ;;
 (defun lesson-to-json ()
+  "Convert lesson to json. If line begining is numbered item line will convert
+to json question item (use ; to split question and answer). All other strings
+will convert to json point type."
   (interactive)
   (let ((from-file (read-file-name "To json:" (buffer-file-name)))
          (to-file (read-file-name "Save to:" nil nil nil (concat (file-name-sans-extension (buffer-name)) ".json"))))
          (message to-file)
-         (setq input-lines (read-json from-file))
+         (setq input-lines (read-lesson from-file))
          (write-json input-lines to-file)
-         (find-file to-file)
-         ))
+         (find-file to-file)))
 
-(defun read-json (file)
+(defun read-lesson (file)
+  "Read `file'.
+Returns list of strings"
   (split-string
           (with-temp-buffer
            (insert-file-contents file)
@@ -177,6 +188,7 @@ If slide buffer is active switch to lesson buffer an search new question"
           "\n" t))
 
 (defun write-json (lines file)
+  "Writes `lines' to `file'"
   (setq header "{
   \"lessonId\": \"lesson\",
   \"lessonTitle\": \"Урок \",
@@ -195,6 +207,9 @@ If slide buffer is active switch to lesson buffer an search new question"
     (insert footer)))
 
 (defun get-question (str)
+  "Returns prepared json question item. If `str' contains
+`answer-question-delimiter' first part will answer, the second one will
+question. If delimiter omited question part will empty"
   (setq template "\n    {
       \"itemType\": \"question\",
       \"question\": \"%s\",
@@ -202,10 +217,11 @@ If slide buffer is active switch to lesson buffer an search new question"
       \"startTime\": \":\"
     },")
   (format template
-   (get-second-lang str)
-   (get-first-lang str)))
+   (get-question-part str)
+   (get-answer-part str)))
 
 (defun get-point (str)
+  "Returns prepared json point item"
   (setq template "\n    {
       \"itemType\": \"point\",
       \"itemText\": \"%s\",
@@ -214,6 +230,7 @@ If slide buffer is active switch to lesson buffer an search new question"
   (format template str))
 
 (defun replace-org-to-html (str)
+  "Relaces /*_ org formating to <i></i>, <b></b>, <u></u> accordingly"
   (let* ((pattern "[/_\\*]\\(.+\\)[/_\\*]")
          (found (string-match pattern str)))
     (if (null found)
@@ -230,13 +247,17 @@ If slide buffer is active switch to lesson buffer an search new question"
          (concat t-s (match-string 1 str) t-e)))
       )))
 
-(defun get-first-lang (line)
+(defun get-answer-part (line)
+  "If `line' contains `answer-question-delimiter' first part will return.
+Whole line otherwise"
   (let ((delimiter (lang-delimiter-position line)))
     (if (null delimiter)
         line
       (string-trim (substring line 0 delimiter)))))
 
-(defun get-second-lang (line)
+(defun get-question-part (line)
+  "If `line' contains `answer-question-delimiter' the second part will return.
+Empty line otherwise"
   (let ((delimiter (lang-delimiter-position line)))
     (if (null delimiter)
         ""
