@@ -93,20 +93,22 @@ number. If question found send message after `message-time-delay' sec."
   (lesson-switch-to-lesson)
   (next-window 1))
 
-(defun word-send-to-slide ()
-  "Temporary send current word to slide buffer and switch to it.
-
+(defun word-region-blink-to-slide ()
+  "Temporary send current word or region to slide buffer and switch to it.
 Clear this line after `word-preview-time and switch to previous buffer."
   (interactive)
-  (let* ((str (word-at-point)))
+  (let ((str (word-at-point)))
+    (if (region-active-p)
+            (setq str (buffer-substring (region-beginning) (region-end))))
     (with-current-buffer "slide"
       (progn
-      (insert (concat "\n~" str "~"))
-      (end-of-line)
-      (sit-for word-preview-time)
-      (clear-line-go-to-lesson)
-      (other-window 1)
-      ))))
+        (message (region-active-p))
+        (insert (concat "\n~" (string-trim str) "~"))
+        (end-of-line)
+        (sit-for word-preview-time)
+        (clear-line-go-to-lesson)
+        (other-window 1)
+        ))))
 
 (defun clear-line-go-to-lesson ()
   "Clear current line and return to previous window"
@@ -274,7 +276,7 @@ Empty line otherwise"
   (let ((map (make-sparse-keymap)))
     ;; key bindings
     (define-key map (kbd "<f5>") 'lesson-slide-swich)
-    (define-key map (kbd "<f6>") 'word-send-to-slide)
+    (define-key map (kbd "<f6>") 'word-region-blink-to-slide)
     (define-key map (kbd "<f8>") 'clear-line-go-to-lesson)
     (define-key map (kbd "<f9>") 'lesson-new-slide)
     map)
@@ -285,7 +287,7 @@ Empty line otherwise"
   '("Lesson"
     ["New slide" lesson-new-slide]
     ["Send line to slide" lesson-slide-swich]
-    ["Send word to slide" word-send-to-slide]
+    ["Word or region blink to slide" word-region-blink-to-slide]
     "---"
     ["Version" lesson-mode-version]))
 
