@@ -13,7 +13,7 @@
 ;; Customizable Variables
 ;;
 (defconst lesson-mode-version "0.1"
-  "The version of `my-lesson-mode'.")
+  "The version of `lesson-mode'.")
 
 (defcustom message-time-delay 6
   "Delay time before answer hint."
@@ -133,7 +133,7 @@ If slide buffer is active switch to lesson buffer an search new question"
       (progn
         (generate-new-buffer slide-name)
         (with-current-buffer slide-name
-          (funcall 'my-lesson-mode)
+          (funcall 'lesson-mode)
           (text-scale-set 3)
           (split-window-right)
           (switch-to-buffer-other-window slide-name)
@@ -266,11 +266,11 @@ Empty line otherwise"
 ;; Mode settings, etc
 ;;
 (defun lesson-mode-version ()
-  "Show the `my-lesson-mode' version in the echo area."
+  "Show the `lesson-mode' version in the echo area."
   (interactive)
   (message (concat "lesson-mode version " lesson-mode-version)))
 
-(defvar my-lesson-mode-map
+(defvar lesson-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
     (define-key map (kbd "<f5>") 'lesson-slide-swich)
@@ -278,10 +278,10 @@ Empty line otherwise"
     (define-key map (kbd "<f8>") 'clear-line-go-to-lesson)
     (define-key map (kbd "<f9>") 'lesson-new-slide)
     map)
-  "Keymap for `my-lesson-mode' major mode.")
+  "Keymap for `lesson-mode' major mode.")
 
-(easy-menu-define my-lesson-mode-menu my-lesson-mode-map
-  "Menu for `my-lesson-mode' mode"
+(easy-menu-define lesson-mode-menu lesson-mode-map
+  "Menu for `lesson-mode' mode"
   '("Lesson"
     ["New slide" lesson-new-slide]
     ["Send line to slide" lesson-slide-swich]
@@ -289,21 +289,21 @@ Empty line otherwise"
     "---"
     ["Version" lesson-mode-version]))
 
-(define-derived-mode my-lesson-mode org-mode "Lesson"
+(define-derived-mode lesson-mode org-mode "Lesson"
   "Major mode for English lesson"
-  (use-local-map my-lesson-mode-map))
+  (use-local-map lesson-mode-map))
 
-(add-hook 'my-lesson-mode-hook 's)
-(add-hook 'my-lesson-mode-hook 'flyspell-mode)
-(provide 'my-lesson-mode)
+(add-hook 'lesson-mode-hook 's)
+(add-hook 'lesson-mode-hook 'flyspell-mode)
+(provide 'lesson-mode)
 
 ;;
 ;; On Load
 ;;
-;; Run my-lesson-mode for files ending in .orgl or .lesson
+;; Run lesson-mode for files ending in .orgl or .lesson
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.lesson\\'" . my-lesson-mode))
-(add-to-list 'auto-mode-alist '("\\.orgl\\'" . my-lesson-mode))
+(add-to-list 'auto-mode-alist '("\\.lesson\\'" . lesson-mode))
+(add-to-list 'auto-mode-alist '("\\.orgl\\'" . lesson-mode))
 
 ;; ;; Old
 ;; (defun lesson-new-slide-temp ()
@@ -316,11 +316,11 @@ Empty line otherwise"
 ;;           ))
 ;;     (generate-new-buffer slide-name)
 ;;     (with-current-buffer slide-name
-;;       (funcall 'my-lesson-mode))
+;;       (funcall 'lesson-mode))
 ;;     (split-window-right)
 ;;     (switch-to-buffer-other-window slide-name)))
 
-;; (defun my-lesson-clear-order-mark ()
+;; (defun lesson-clear-order-mark ()
 ;;   (interactive)
 ;;   (previous-line)
 ;;   (while (re-search-forward " \\[@[[:digit:]{1,4}]\\] " nil t)
@@ -333,4 +333,4 @@ Empty line otherwise"
 ;; (with-current-buffer "slide"
 ;;   (insert (concat str "\n")))
 
-;;; my-lesson-org-mode.el ends here
+;;; lesson-org-mode.el ends here
