@@ -1,4 +1,4 @@
-;;; my-lesson-org-mode.el --- 
+;;; lesson-org-mode.el --- 
 
 ;; Copyright (C) Michael Kazarian
 ;;
@@ -12,16 +12,16 @@
 ;;
 ;; Customizable Variables
 ;;
-(defconst my-lesson-mode-version "0.1"
+(defconst lesson-mode-version "0.1"
   "The version of `my-lesson-mode'.")
 
-(defcustom my-message-time-delay 6
+(defcustom message-time-delay 6
   "Delay time before answer hint."
   :type 'integer
   :safe 'integerp
   :group 'lesson-mode)
 
-(defcustom my-word-preview-time 3
+(defcustom word-preview-time 3
   "Word preview time"
   :type 'integer
   :safe 'integerp
@@ -60,7 +60,7 @@
 
 (defun lesson-switch-to-lesson ()
   "Switch to lesson window. After switching searche next question by
-number. If question found send message after `my-message-time-delay' sec."
+number. If question found send message after `message-time-delay' sec."
   (interactive)
   (other-window 1)
   (let ((start-point (re-search-forward "^[[:space:]]*[0-9]" nil t)))
@@ -68,7 +68,7 @@ number. If question found send message after `my-message-time-delay' sec."
         (progn
           (goto-char start-point)
           ;; (new-q-message)
-          (run-at-time my-message-time-delay nil #'answer-message))
+          (run-at-time message-time-delay nil #'answer-message))
       (next-line))))
 
 (defun lesson-send-to-slide ()
@@ -96,14 +96,14 @@ number. If question found send message after `my-message-time-delay' sec."
 (defun word-send-to-slide ()
   "Temporary send current word to slide buffer and switch to it.
 
-Clear this line after `my-word-preview-time and switch to previous buffer."
+Clear this line after `word-preview-time and switch to previous buffer."
   (interactive)
   (let* ((str (word-at-point)))
     (with-current-buffer "slide"
       (progn
       (insert (concat "\n~" str "~"))
       (end-of-line)
-      (sit-for my-word-preview-time)
+      (sit-for word-preview-time)
       (clear-line-go-to-lesson)
       (other-window 1)
       ))))
@@ -265,10 +265,10 @@ Empty line otherwise"
 ;;
 ;; Mode settings, etc
 ;;
-(defun my-lesson-mode-version ()
+(defun lesson-mode-version ()
   "Show the `my-lesson-mode' version in the echo area."
   (interactive)
-  (message (concat "lesson-mode version " my-lesson-mode-version)))
+  (message (concat "lesson-mode version " lesson-mode-version)))
 
 (defvar my-lesson-mode-map
   (let ((map (make-sparse-keymap)))
@@ -287,7 +287,7 @@ Empty line otherwise"
     ["Send line to slide" lesson-slide-swich]
     ["Send word to slide" word-send-to-slide]
     "---"
-    ["Version" my-lesson-mode-version]))
+    ["Version" lesson-mode-version]))
 
 (define-derived-mode my-lesson-mode org-mode "Lesson"
   "Major mode for English lesson"
