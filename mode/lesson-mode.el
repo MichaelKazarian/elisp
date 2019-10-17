@@ -232,7 +232,7 @@ question. If delimiter omited question part will empty"
   (format template str))
 
 (defun replace-org-to-html (str)
-  "Relaces /*_ org formating to <i></i>, <b></b>, <u></u> accordingly"
+  "Replaces /*_ org formating to <i></i>, <b></b>, <u></u> accordingly"
   (let* ((pattern "[/_\\*]\\(.+\\)[/_\\*]")
          (found (string-match pattern str)))
     (if (null found)
