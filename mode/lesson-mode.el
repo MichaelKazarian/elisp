@@ -153,8 +153,7 @@ If slide buffer is active switch to lesson buffer an search new question"
   (set-frame-size (selected-frame) 150 60)
   (set-face-attribute 'org-level-2 nil :foreground "DarkGreen")
   (add-to-list 'org-emphasis-alist
-             '("~" (:foreground "OrangeRed")))
-  )
+             '("~" (:foreground "OrangeRed"))))
 ;;
 ;; orgl to json converter
 ;;
@@ -185,28 +184,34 @@ If slide buffer is active switch to lesson buffer an search new question"
   \"lessonURL\": \"bJkSM3g-Tfs\",
   \"lessonItems\": [")
   (setq footer "\n  ]\n}\n")
-  (setq point "\n    {
+  (with-temp-file file
+    (insert header)
+    (dolist (line lines)
+      (setq l (replace-org-to-html line))
+      (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " l)
+          (setq item (get-question l))
+        (setq item (get-point l)))
+      (insert item))
+    (insert footer)))
+
+(defun get-question (str)
+  (setq template "\n    {
+      \"itemType\": \"question\",
+      \"question\": \"%s\",
+      \"answer\":   \"%s\",
+      \"startTime\": \":\"
+    },")
+  (format template
+   (get-second-lang str)
+   (get-first-lang str)))
+
+(defun get-point (str)
+  (setq template "\n    {
       \"itemType\": \"point\",
       \"itemText\": \"%s\",
       \"startTime\": \":\"
     },")
-  (setq question "\n    {
-      \"itemType\": \"question\",
-      \"question\": \"\",
-      \"answer\":   \"%s\",
-      \"startTime\": :
-    },")
-  (with-temp-file file
-    (insert header)
-    (setq item-type point)
-    (dolist (line lines)
-      (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " line)
-          (setq item-type question))
-      (insert (format
-               item-type
-               (replace-org-to-html line))))
-    (insert footer))
-  )
+  (format template str))
 
 (defun replace-org-to-html (str)
   (let* ((pattern "[/_\\*]\\(.+\\)[/_\\*]")
@@ -214,7 +219,7 @@ If slide buffer is active switch to lesson buffer an search new question"
     (if (null found)
         str
       (progn
-        (setq tag  (substring str found (+ found 1)))
+        (setq tag (substring str found (+ found 1)))
         (message tag)
         (setq t-s "") (setq t-e "")
         (cond ((equal "*" tag) (setq t-s "<b>") (setq t-e "</b>"))
@@ -223,8 +228,19 @@ If slide buffer is active switch to lesson buffer an search new question"
         (mapconcat
          'identity (split-string str pattern)
          (concat t-s (match-string 1 str) t-e)))
-      ))
-  )
+      )))
+
+(defun get-first-lang (line)
+  (let ((delimiter (lang-delimiter-position line)))
+    (if (null delimiter)
+        line
+      (string-trim (substring line 0 delimiter)))))
+
+(defun get-second-lang (line)
+  (let ((delimiter (lang-delimiter-position line)))
+    (if (null delimiter)
+        ""
+      (string-trim (substring line (+ 1 delimiter))))))
 ;;
 ;; Mode settings, etc
 ;;
