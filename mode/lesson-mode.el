@@ -12,7 +12,6 @@
 ;;
 ;; Customizable Variables
 ;;
-
 (defconst my-lesson-mode-version "0.1"
   "The version of `my-lesson-mode'.")
 
@@ -22,6 +21,14 @@
   :safe 'integerp
   :group 'lesson-mode)
 
+(defcustom my-word-preview-time 3
+  "Word preview time"
+  :type 'integer
+  :safe 'integerp
+  :group 'lesson-mode)
+;;
+;; Core
+;;
 (defun lang-delimiter-position (str)
   (string-match ";" str))
 
@@ -80,15 +87,19 @@ number. If question found send message after `my-message-time-delay' sec."
   (next-window 1))
 
 (defun word-send-to-slide ()
-  "Send current word to slide buffer and switch to it"
+  "Temporary send current word to slide buffer and switch to it.
+
+Clear this line after `my-word-preview-time and switch to previous buffer."
   (interactive)
   (let* ((str (word-at-point)))
     (with-current-buffer "slide"
       (progn
-      (insert (concat "\n" str))
-      (end-of-line))))
-  (lesson-switch-to-lesson)
-  (next-window 1))
+      (insert (concat "\n~" str "~"))
+      (end-of-line)
+      (sit-for my-word-preview-time)
+      (clear-line-go-to-lesson)
+      (other-window 1)
+      ))))
 
 (defun clear-line-go-to-lesson ()
   "Clear current line and return to previous window"
@@ -117,12 +128,36 @@ If slide buffer is active switch to lesson buffer an search new question"
         (with-current-buffer slide-name
           (funcall 'my-lesson-mode)
           (text-scale-set 3)
+          (split-window-right)
+          (switch-to-buffer-other-window slide-name)
+          (enlarge-window-horizontally 35)
+          (other-window 1)
           ;(text-scale-adjust 1)
-          )
-        (split-window-right)
-        (switch-to-buffer-other-window slide-name)
-        (enlarge-window-horizontally 35)))))
+          )))))
 
+(defun s ()
+  "Setup `org-mode' for lesson"
+  (set-face-background 'hl-line "NavajoWhite")
+  (set-face-attribute hl-line-face nil :underline nil)
+  (linum-mode -1)
+  (olivetti-mode -1)
+  (setq org-hide-emphasis-markers t)
+  (load-theme 'dichromacy t)
+
+  ;; make part of a word bold
+  ;; https://stackoverflow.com/posts/24540651/revisions
+  (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
+  (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
+  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
+  ;;
+  (set-frame-size (selected-frame) 150 60)
+  (set-face-attribute 'org-level-2 nil :foreground "DarkGreen")
+  (add-to-list 'org-emphasis-alist
+             '("~" (:foreground "OrangeRed")))
+  )
+;;
+;; orgl to json converter
+;;
 (defun lesson-to-json ()
   (interactive)
   (let ((from-file (read-file-name "To json:" (buffer-file-name)))
@@ -190,23 +225,9 @@ If slide buffer is active switch to lesson buffer an search new question"
          (concat t-s (match-string 1 str) t-e)))
       ))
   )
-
-(defun s ()
-  "Setup `org-mode' for lesson"
-  (set-face-background 'hl-line "NavajoWhite")
-  (set-face-attribute hl-line-face nil :underline nil)
-  (linum-mode -1)
-  (olivetti-mode -1)
-  (setq org-hide-emphasis-markers t)
-  (load-theme 'dichromacy t)
-  ;; make part of a word bold
-  ;; https://stackoverflow.com/posts/24540651/revisions
-  (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
-  (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
-  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
-  ;;
-  (set-frame-size (selected-frame) 150 60))
-
+;;
+;; Mode settings, etc
+;;
 (defun my-lesson-mode-version ()
   "Show the `my-lesson-mode' version in the echo area."
   (interactive)
