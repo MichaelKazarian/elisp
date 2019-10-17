@@ -148,10 +148,10 @@ If slide buffer is active switch to lesson buffer an search new question"
   "Setup `org-mode' for lesson"
   (set-face-background 'hl-line "NavajoWhite")
   (set-face-attribute hl-line-face nil :underline nil)
-  (linum-mode -1)
+  (display-line-numbers-mode -1)
   (olivetti-mode -1)
   (setq org-hide-emphasis-markers t)
-  (load-theme 'dichromacy t)
+  ;; (load-theme 'dichromacy t)
 
   ;; make part of a word bold
   ;; https://stackoverflow.com/posts/24540651/revisions
