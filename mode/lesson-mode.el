@@ -49,12 +49,7 @@
 (defun new-q-message ()
   "Say Ukrainian text"
   (let ((str (buffer-substring (line-beginning-position) (line-end-position))))
-     (message (format "Question: ~ %s ~ " (get-question-part str))))
-  ;; (setq str (buffer-substring
-  ;;          (line-beginning-position)
-  ;;          (line-end-position)))
-  ;;  (message (format "TO UKR: ~ %s ~ " str))
- )
+     (message (format "Question: ~ %s ~ " (get-question-part str)))))
 
 (defun lesson-switch-to-lesson ()
   "Switch to lesson window. After switching searche next question by
