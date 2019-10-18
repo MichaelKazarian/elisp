@@ -55,7 +55,7 @@
   "Switch to lesson window. After switching searche next question by
 number. If question found send message after `message-time-delay' sec."
   (interactive)
-  (other-window 1)
+  ;(other-window 1)
   (let ((start-point (re-search-forward "^[[:space:]]*[0-9]" nil t)))
     (if start-point
         (progn
@@ -67,24 +67,15 @@ number. If question found send message after `message-time-delay' sec."
 (defun lesson-send-to-slide ()
   "Send current line to slide buffer and switch to it"
   (interactive)
-  (move-beginning-of-line nil)
-  (set-mark-command nil)
-  (move-end-of-line nil)
-  (setq deactivate-mark nil)
-  (let* ((str (buffer-substring (region-beginning) (region-end)))
-         (str-end (lang-delimiter-position str))
-         (str-start (- (region-beginning) 1)))
-    (if (not str-end)
-        (setq str-end (region-end))
-      (setq str-end (+ str-start str-end 1)))
-    (append-to-buffer "slide" str-start str-end))
-  ;; (append-to-buffer "slide"
-  ;;                   (- (region-beginning) 1)
-  ;;                   (region-end))
-
   (deactivate-mark)
+  (let ((str (thing-at-point 'line t)))
+    (with-current-buffer "slide"
+      (end-of-line)
+      (newline)
+      (insert (get-answer-part str))))
   (lesson-switch-to-lesson)
-  (next-window 1))
+  ;(next-window 1)
+  )
 
 (defun word-region-blink-to-slide ()
   "Temporary send current word or region to slide buffer and switch to it.
@@ -247,7 +238,7 @@ question. If delimiter omited question part will empty"
 Whole line otherwise"
   (let ((delimiter (lang-delimiter-position line)))
     (if (null delimiter)
-        line
+        (string-trim line)
       (string-trim (substring line 0 delimiter)))))
 
 (defun get-question-part (line)
