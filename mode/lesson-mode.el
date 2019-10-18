@@ -15,7 +15,7 @@
 (defconst lesson-mode-version "0.1"
   "The version of `lesson-mode'.")
 
-(defcustom message-time-delay 6
+(defcustom message-time-delay 3
   "Delay time before answer hint."
   :type 'integer
   :safe 'integerp
@@ -44,14 +44,12 @@
   (setq str (buffer-substring
            (line-beginning-position)
            (line-end-position)))
-  (message (format "ANSWER: ~ %s ~ and F5 to publish it" str)))
+  (message (format "ANSWER: ~ %s ~ and F5 to publish it" (get-answer-part str))))
 
 (defun new-q-message ()
   "Say Ukrainian text"
-  (let* ((str (buffer-substring (line-beginning-position) (line-end-position)))
-         (delim (lang-delimiter-position str)))
-    (if delim (setq str (substring str delim)))
-     (message (format "TO UKR: ~ %s ~ " str)))
+  (let ((str (buffer-substring (line-beginning-position) (line-end-position))))
+     (message (format "Question: ~ %s ~ " (get-question-part str))))
   ;; (setq str (buffer-substring
   ;;          (line-beginning-position)
   ;;          (line-end-position)))
@@ -67,7 +65,7 @@ number. If question found send message after `message-time-delay' sec."
     (if start-point
         (progn
           (goto-char start-point)
-          ;; (new-q-message)
+          (new-q-message)
           (run-at-time message-time-delay nil #'answer-message))
       (next-line))))
 
