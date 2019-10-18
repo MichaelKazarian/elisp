@@ -132,9 +132,10 @@ If slide buffer is active switch to lesson buffer an search new question"
   "If `line' contains `answer-question-delimiter' first part will return.
 Whole line otherwise"
   (let ((delimiter (lang-delimiter-position line)))
-    (if (null delimiter)
-        (string-trim line)
-      (string-trim (substring line 0 delimiter)))))
+    (setq res (if (null delimiter)
+        line
+        (substring line 0 delimiter)))
+    (clear-org-number-braces (string-trim res))))
 
 (defun get-question-part (line)
   "If `line' contains `answer-question-delimiter' the second part will return.
@@ -143,6 +144,11 @@ Empty line otherwise"
     (if (null delimiter)
         ""
       (string-trim (substring line (+ 1 delimiter))))))
+
+(defun clear-org-number-braces (str)
+    "Org uses form like [@11] to number start with 11.
+If STR contains it returns string without this form"
+     (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
 
 (defun s ()
   "Setup `org-mode' for lesson"
