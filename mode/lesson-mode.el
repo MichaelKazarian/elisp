@@ -170,10 +170,10 @@ If STR contains it returns string without this form"
   (add-to-list 'org-emphasis-alist
              '("~" (:foreground "OrangeRed"))))
 ;;
-;; orgl to json converter
+;; Lesson to json converter
 ;;
 (defun lesson-to-json ()
-  "Convert lesson to json. If line begining is numbered item line will convert
+  "Converts lesson to json. If line begining is numbered item line will convert
 to json question item (use ; to split question and answer). All other strings
 will convert to json point type."
   (interactive)
@@ -297,33 +297,5 @@ question. If delimiter omited question part will empty"
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.lesson\\'" . lesson-mode))
 (add-to-list 'auto-mode-alist '("\\.orgl\\'" . lesson-mode))
-
-;; ;; Old
-;; (defun lesson-new-slide-temp ()
-;;   (interactive)
-;;   (let ((slide-name "slide"))
-;;     (if (get-buffer slide-name)
-;;         (progn
-;;           (kill-buffer slide-name)
-;;           (delete-other-windows)
-;;           ))
-;;     (generate-new-buffer slide-name)
-;;     (with-current-buffer slide-name
-;;       (funcall 'lesson-mode))
-;;     (split-window-right)
-;;     (switch-to-buffer-other-window slide-name)))
-
-;; (defun lesson-clear-order-mark ()
-;;   (interactive)
-;;   (previous-line)
-;;   (while (re-search-forward " \\[@[[:digit:]{1,4}]\\] " nil t)
-;;     (replace-match " ")))
-
-;; ;; Another send-to slide solution
-;; (setq str (buffer-substring
-;;            (region-beginning)
-;;            (region-end)))
-;; (with-current-buffer "slide"
-;;   (insert (concat str "\n")))
 
 ;;; lesson-org-mode.el ends here
