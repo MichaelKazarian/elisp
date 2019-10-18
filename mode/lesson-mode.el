@@ -128,6 +128,22 @@ If slide buffer is active switch to lesson buffer an search new question"
           ;(text-scale-adjust 1)
           )))))
 
+(defun get-answer-part (line)
+  "If `line' contains `answer-question-delimiter' first part will return.
+Whole line otherwise"
+  (let ((delimiter (lang-delimiter-position line)))
+    (if (null delimiter)
+        (string-trim line)
+      (string-trim (substring line 0 delimiter)))))
+
+(defun get-question-part (line)
+  "If `line' contains `answer-question-delimiter' the second part will return.
+Empty line otherwise"
+  (let ((delimiter (lang-delimiter-position line)))
+    (if (null delimiter)
+        ""
+      (string-trim (substring line (+ 1 delimiter))))))
+
 (defun s ()
   "Setup `org-mode' for lesson"
   (set-face-background 'hl-line "NavajoWhite")
@@ -233,21 +249,6 @@ question. If delimiter omited question part will empty"
          (concat t-s (match-string 1 str) t-e)))
       )))
 
-(defun get-answer-part (line)
-  "If `line' contains `answer-question-delimiter' first part will return.
-Whole line otherwise"
-  (let ((delimiter (lang-delimiter-position line)))
-    (if (null delimiter)
-        (string-trim line)
-      (string-trim (substring line 0 delimiter)))))
-
-(defun get-question-part (line)
-  "If `line' contains `answer-question-delimiter' the second part will return.
-Empty line otherwise"
-  (let ((delimiter (lang-delimiter-position line)))
-    (if (null delimiter)
-        ""
-      (string-trim (substring line (+ 1 delimiter))))))
 ;;
 ;; Mode settings, etc
 ;;
