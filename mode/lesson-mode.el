@@ -135,7 +135,8 @@ Whole line otherwise"
     (setq res (if (null delimiter)
         line
         (substring line 0 delimiter)))
-    (clear-org-number-braces (string-trim res))))
+    (clear-org-markers (string-trim res))))
+
 
 (defun get-question-part (line)
   "If `line' contains `answer-question-delimiter' the second part will return.
@@ -145,10 +146,13 @@ Empty line otherwise"
         ""
       (string-trim (substring line (+ 1 delimiter))))))
 
+
 (defun clear-org-number-braces (str)
     "Org uses form like [@11] to number start with 11.
 If STR contains it returns string without this form"
-     (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
+    (setq str (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
+    (setq str (replace-regexp-in-string "^[0-9]*\\.\s" "" str))
+    (setq str (replace-regexp-in-string "[/_\\*]" "" str)))
 
 (defun s ()
   "Setup `org-mode' for lesson"
@@ -207,7 +211,7 @@ Returns list of strings"
   (with-temp-file file
     (insert header)
     (dolist (line lines)
-      (setq l (replace-org-to-html line))
+      (setq l (clear-org-markers line))
       (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " l)
           (setq item (get-question l))
         (setq item (get-point l)))
