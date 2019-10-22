@@ -52,10 +52,10 @@
 ;; highlight-indentation-mode colors
 (add-hook 'highlight-indentation-mode-hook
           (lambda ()
-            (set-face-background 'highlight-indentation-face "gray25")
-            (set-face-background 'highlight-indentation-current-column-face "gray25")
-            ;; (set-face-background 'highlight-indentation-face "#e3e3d3")
-            ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+            ;; (set-face-background 'highlight-indentation-face "gray25")
+            ;; (set-face-background 'highlight-indentation-current-column-face "gray25")
+            (set-face-background 'highlight-indentation-face "Khaki2")
+            (set-face-background 'highlight-indentation-current-column-face "Khaki3")
             ))
 ;;Font
 (require 'font-lock)
@@ -76,7 +76,8 @@
 
 ;; Highlight currentline settings
 (require 'hl-line)
-(set-face-background 'hl-line "SlateBlue4")
+(set-face-background 'hl-line "LightGoldenrod2")
+;(set-face-background 'hl-line "SlateBlue4")
 (set-face-attribute hl-line-face nil :underline nil)
 ;(set-face-background 'hl-line "only line")
 (add-hook 'dired-mode-hook 'hl-line-mode)
