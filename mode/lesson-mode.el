@@ -72,7 +72,9 @@ number. If question found send message after `message-time-delay' sec."
     (with-current-buffer "slide"
       (end-of-line)
       (newline)
-      (insert (get-answer-part str))))
+      (insert (get-answer-part str))
+      (hl-line-highlight)
+      ))
   (lesson-switch-to-lesson)
   ;(next-window 1)
   )
