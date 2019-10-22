@@ -207,6 +207,7 @@ Returns list of strings"
   \"lessonURL\": \"bJkSM3g-Tfs\",
   \"lessonItems\": [")
   (setq footer "\n  ]\n}\n")
+  ;; TODO. Write to temp buffer, not a file
   (with-temp-file file
     (insert header)
     (dolist (line lines)
