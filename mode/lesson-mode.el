@@ -159,7 +159,7 @@ Empty line otherwise"
 
 (defun s ()
   "Setup `org-mode' for lesson"
-  (set-face-background 'hl-line "NavajoWhite")
+  ;; (set-face-background 'hl-line "NavajoWhite")
   (set-face-attribute hl-line-face nil :underline nil)
   (display-line-numbers-mode -1)
   (olivetti-mode -1)
