@@ -83,18 +83,20 @@ number. If question found send message after `message-time-delay' sec."
   "Temporary send current word or region to slide buffer and switch to it.
 Clear this line after `word-preview-time and switch to previous buffer."
   (interactive)
-  (let ((str (word-at-point)))
+  (let ((str (word-at-point))
+        (current-buffer (buffer-name)))
     (if (region-active-p)
             (setq str (buffer-substring (region-beginning) (region-end))))
     (with-current-buffer "slide"
       (progn
         (message (region-active-p))
         (insert (concat "\n~" (string-trim str) "~"))
-        (end-of-line)
         (sit-for word-preview-time)
         (clear-line-go-to-lesson)
-        (other-window 1)
-        ))))
+        (end-of-buffer)
+        (switch-to-buffer-other-window current-buffer)
+        ))
+    (deactivate-mark)))
 
 (defun clear-line-go-to-lesson ()
   "Clear current line and return to previous window"
