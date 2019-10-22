@@ -72,7 +72,7 @@ number. If question found send message after `message-time-delay' sec."
     (with-current-buffer "slide"
       (end-of-line)
       (newline)
-      (insert (get-answer-part str))
+      (insert (get-answer-part2 str))
       (hl-line-highlight)
       ))
   (lesson-switch-to-lesson)
@@ -131,6 +131,15 @@ If slide buffer is active switch to lesson buffer an search new question"
           (other-window 1)
           ;(text-scale-adjust 1)
           )))))
+
+(defun get-answer-part2 (line)
+  "If `line' contains `answer-question-delimiter' first part will return.
+Whole line otherwise"
+  (let ((delimiter (lang-delimiter-position line)))
+    (setq res (if (null delimiter)
+        line
+        (substring line 0 delimiter)))
+    (replace-regexp-in-string "\\[@.*\\]\s*" "" (string-trim res))))
 
 (defun get-answer-part (line)
   "If `line' contains `answer-question-delimiter' first part will return.
