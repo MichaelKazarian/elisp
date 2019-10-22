@@ -147,9 +147,8 @@ Empty line otherwise"
       (string-trim (substring line (+ 1 delimiter))))))
 
 
-(defun clear-org-number-braces (str)
-    "Org uses form like [@11] to number start with 11.
-If STR contains it returns string without this form"
+(defun clear-org-markers (str)
+    "Clear org markers like numbering, [@11] /*_"
     (setq str (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
     (setq str (replace-regexp-in-string "^[0-9]*\\.\s" "" str))
     (setq str (replace-regexp-in-string "[/_\\*]" "" str)))
