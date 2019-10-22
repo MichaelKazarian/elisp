@@ -27,6 +27,7 @@
 (load "~/elisp/rc/rc-ispell.el")
 (load "~/elisp/rc/rc-eshell.el")
 (load "~/elisp/rc/rc-nxml.el")
+(load "~/elisp/rc/rc-json.el")
 (load "~/elisp/rc/rc-python.el")
 (load "~/elisp/rc/java.el")
 (load "~/elisp/rc/markdown.el")
