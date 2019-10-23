@@ -72,7 +72,8 @@ number. If question found send message after `message-time-delay' sec."
     (with-current-buffer "slide"
       (end-of-line)
       (newline)
-      (insert (get-answer-part2 str))
+      (setq str (get-answer-part str))
+      (insert (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
       (hl-line-highlight)
       ))
   (lesson-switch-to-lesson)
@@ -132,15 +133,6 @@ If slide buffer is active switch to lesson buffer an search new question"
           ;(text-scale-adjust 1)
           )))))
 
-(defun get-answer-part2 (line)
-  "If `line' contains `answer-question-delimiter' first part will return.
-Whole line otherwise"
-  (let ((delimiter (lang-delimiter-position line)))
-    (setq res (if (null delimiter)
-        line
-        (substring line 0 delimiter)))
-    (replace-regexp-in-string "\\[@.*\\]\s*" "" (string-trim res))))
-
 (defun get-answer-part (line)
   "If `line' contains `answer-question-delimiter' first part will return.
 Whole line otherwise"
@@ -148,8 +140,7 @@ Whole line otherwise"
     (setq res (if (null delimiter)
         line
         (substring line 0 delimiter)))
-    (clear-org-markers (string-trim res))))
-
+    (string-trim res)))
 
 (defun get-question-part (line)
   "If `line' contains `answer-question-delimiter' the second part will return.
@@ -158,7 +149,6 @@ Empty line otherwise"
     (if (null delimiter)
         ""
       (string-trim (substring line (+ 1 delimiter))))))
-
 
 (defun clear-org-markers (str)
     "Clear org markers like numbering, [@11] /*_"
@@ -224,10 +214,9 @@ Returns list of strings"
   (with-temp-file file
     (insert header)
     (dolist (line lines)
-      (setq l (clear-org-markers line))
-      (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " l)
-          (setq item (get-question l))
-        (setq item (get-point l)))
+      (if (string-match "^[[:space:]]*[[:digit:]]\\{1,5\\}\\. " line)
+          (setq item (get-question line))
+        (setq item (get-point line)))
       (insert item))
     (insert footer)))
 
@@ -243,7 +232,7 @@ question. If delimiter omited question part will empty"
     },")
   (format template
    (get-question-part str)
-   (get-answer-part str)))
+   (clear-org-markers (get-answer-part str))))
 
 (defun get-point (str)
   "Returns prepared json point item"
@@ -252,17 +241,18 @@ question. If delimiter omited question part will empty"
       \"itemText\": \"%s\",
       \"startTime\": \":\"
     },")
-  (format template str))
+  (format template (replace-org-to-html str)))
 
 (defun replace-org-to-html (str)
   "Replaces /*_ org formating to <i></i>, <b></b>, <u></u> accordingly"
+  (message str)
   (let* ((pattern "[/_\\*]\\(.+\\)[/_\\*]")
          (found (string-match pattern str)))
     (if (null found)
         str
       (progn
         (setq tag (substring str found (+ found 1)))
-        (message tag)
+;        (message tag)
         (setq t-s "") (setq t-e "")
         (cond ((equal "*" tag) (setq t-s "<b>") (setq t-e "</b>"))
               ((equal "_" tag) (setq t-s "<u>") (setq t-e "</u>"))
