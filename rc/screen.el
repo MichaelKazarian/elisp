@@ -58,7 +58,6 @@
             (set-face-background 'highlight-indentation-face "Khaki2")
             (set-face-background 'highlight-indentation-current-column-face "Khaki3")
             ))
-(setq indent-guide-delay 0.5)
 
 ;;Font
 (require 'font-lock)
