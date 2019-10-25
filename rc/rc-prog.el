@@ -17,6 +17,8 @@
   (display-line-numbers-mode 1)
   (highlight-symbol-mode 1) ;; Perhaps highlight-thing.el will better?
   (highlight-symbol-nav-mode 1)
+  ;; (setq compilation-scroll-output t) ;; Compilation buffer auto scrol
+  (setq compilation-scroll-output 'first-error) ;; scroll to the first error
   (local-set-key (kbd "\e\em") 'company-complete)
   (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
   (local-set-key (kbd "<f7>") 'highlight-symbol-next-in-defun)
