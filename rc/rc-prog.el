@@ -13,6 +13,7 @@
   (abbrev-mode 1)
   (electric-pair-mode)
   (outline-minor-mode 1)
+  (vim-empty-lines-mode 1)
   (display-line-numbers-mode 1)
   (highlight-symbol-mode 1) ;; Perhaps highlight-thing.el will better?
   (highlight-symbol-nav-mode 1)

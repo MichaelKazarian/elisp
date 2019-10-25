@@ -11,3 +11,4 @@ and install these packages:
     line-reminder magit meghanada nov nova-theme
     olivetti org py-autopep8 sunny-day-theme use-package
     web-mode-edit-element yasnippet-classic-snippets
+    vim-empty-lines-mode
