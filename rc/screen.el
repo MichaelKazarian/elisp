@@ -1,4 +1,6 @@
-;;; emacs-rc-screen.el --- Editing screen
+;;; emacs-rc-screen.el ---
+
+;;; General screen settings
 
 ;; Copyright (C) 2009 Michael Kazarian
 ;; Author: michael.kazarian@gmail.com
@@ -48,17 +50,6 @@
 ;; (load-theme 'mccarthy t)
 ;; (load-theme 'Deviant t) ;;https://github.com/Corsair/emacs-deviant-theme/blob/master/Deviant-theme.el
 
-;;; Highlight indentation
-
-;; highlight-indentation-mode colors
-(add-hook 'highlight-indentation-mode-hook
-          (lambda ()
-            ;; (set-face-background 'highlight-indentation-face "gray25")
-            ;; (set-face-background 'highlight-indentation-current-column-face "gray25")
-            (set-face-background 'highlight-indentation-face "Khaki2")
-            (set-face-background 'highlight-indentation-current-column-face "Khaki3")
-            ))
-
 ;;Font
 (require 'font-lock)
 (setq ttf-font "-*-Inconsolata LGC-normal-r-*-*-15-*-*-*-c-*-iso8859-1")
@@ -76,51 +67,5 @@
 (setq font-lock-maximum-decoration t)
 (setq unibyte-display-via-language-environment t)
 
-;; Highlight currentline settings
-(require 'hl-line)
-(set-face-background 'hl-line "LightGoldenrod2")
-;(set-face-background 'hl-line "SlateBlue4")
-(set-face-attribute hl-line-face nil :underline nil)
-;(set-face-background 'hl-line "only line")
-(add-hook 'dired-mode-hook 'hl-line-mode)
-(add-hook 'package-menu-mode-hook 'hl-line-mode)
-(add-hook 'buffer-menu-mode-hook 'hl-line-mode)
-(add-hook 'ibuffer-mode-hook 'hl-line-mode)
-
-;; Whitespace settings
-(whitespace-mode 1)
-(setq whitespace-global-mode nil)
-(setq whitespace-silent t)
-(setq whitespace-modes (quote (awk-mode)))
-(setq whitespace-style '(spaces tabs newline space-mark tab-mark face))
-(set-face-attribute 'whitespace-space nil :background nil :foreground "gray70")
-
-(setq whitespace-display-mappings
-  ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
-  '(
-    (space-mark 32 [183] [46]) ; 32 SPACE 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-    (newline-mark 10 [182 10]) ; 10 LINE FEED
-    (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
-    ))
-
-;;; Add markers to the fringe for regions foldable by hideshow.el
-(autoload 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
-
-(autoload 'hideshowvis-minor-mode
-  "hideshowvis"
-  "Will indicate regions foldable with hideshow in the fringe."
-  'interactive)
-
-(dolist (hook (list 'emacs-lisp-mode-hook
-                    'java-mode-hook
-                    'python-mode-hook
-                    'c-mode-hook))
-  (add-hook hook 'hideshowvis-enable))
-;;;
-
-(setq w3m-default-display-inline-images t) ;; w3m show pictures
-
-;; Remind current line status by current buffer.
-(global-line-reminder-mode t)
 
 ;;; emacs-rc-screen.el ends here

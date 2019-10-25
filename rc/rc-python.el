@@ -24,12 +24,6 @@
                  'py-beginning-of-def-or-class)
             (setq outline-regexp "def\\|class ")
             (setq tab-width 4)
-            (display-line-numbers-mode)
-            (highlight-indentation-mode)
-            (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
-            (electric-pair-mode)
-            (outline-minor-mode 1)
-            (local-set-key (kbd "\e\em") 'company-complete)
             (local-set-key [f8] 'flycheck-mode)
             ))
 

@@ -19,6 +19,7 @@
 (load "~/elisp/rc/editing.el")
 (load "~/elisp/rc/screen.el")
 (load "~/elisp/rc/vcs.el")
+(load "~/elisp/rc/rc-prog.el")
 ;; programming tools & languages
 (load "~/elisp/rc/lisp.el")
 (load "~/elisp/rc/tags.el")

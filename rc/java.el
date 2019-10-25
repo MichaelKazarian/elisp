@@ -6,13 +6,10 @@
 ;;
 (defun my-java-mode-hook ()
   ;; (local-set-key (kbd "RET") 'newline-and-indent)
-  ;; (linum-mode 1)
   (display-line-numbers-mode)
   (setq tab-width 2)
-  (hs-minor-mode)
   (setq c-basic-offset 2)
   (define-key c-mode-base-map "\C-m" 'c-context-line-break)
-  (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
   (local-set-key [f8] 'flycheck-mode)
   ;; Fix indentation for anonymous classes
   (c-set-offset 'substatement-open 0)

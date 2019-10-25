@@ -11,11 +11,8 @@
           (lambda ()
             (make-local-variable 'js-indent-level)
             (setq js-indent-level 2)
-            (display-line-numbers-mode)
             (highlight-indentation-mode)
             (whitespace-mode 1)
-            (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
-            (electric-pair-mode)
             (local-set-key [f8] 'flycheck-mode)
             ))
 
