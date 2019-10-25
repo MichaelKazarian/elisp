@@ -42,20 +42,20 @@
 (defun answer-message ()
   "Hint to say answer and publish it in the slide"
   (setq str (buffer-substring
-           (line-beginning-position)
-           (line-end-position)))
+             (line-beginning-position)
+             (line-end-position)))
   (message (format "ANSWER: ~ %s ~ and F5 to publish it" (get-answer-part str))))
 
 (defun new-q-message ()
   "Say Ukrainian text"
   (let ((str (buffer-substring (line-beginning-position) (line-end-position))))
-     (message (format "Question: ~ %s ~ " (get-question-part str)))))
+    (message (format "Question: ~ %s ~ " (get-question-part str)))))
 
 (defun lesson-switch-to-lesson ()
   "Switch to lesson window. After switching searche next question by
 number. If question found send message after `message-time-delay' sec."
   (interactive)
-  ;(other-window 1)
+                                        ;(other-window 1)
   (let ((start-point (re-search-forward "^[[:space:]]*[0-9]" nil t)))
     (if start-point
         (progn
@@ -77,7 +77,7 @@ number. If question found send message after `message-time-delay' sec."
       (hl-line-highlight)
       ))
   (lesson-switch-to-lesson)
-  ;(next-window 1)
+                                        ;(next-window 1)
   )
 
 (defun word-region-blink-to-slide ()
@@ -87,7 +87,7 @@ Clear this line after `word-preview-time and switch to previous buffer."
   (let ((str (word-at-point))
         (current-buffer (buffer-name)))
     (if (region-active-p)
-            (setq str (buffer-substring (region-beginning) (region-end))))
+        (setq str (buffer-substring (region-beginning) (region-end))))
     (with-current-buffer "slide"
       (progn
         (message (region-active-p))
@@ -130,7 +130,7 @@ If slide buffer is active switch to lesson buffer an search new question"
           (switch-to-buffer-other-window slide-name)
           (enlarge-window-horizontally 35)
           (other-window 1)
-          ;(text-scale-adjust 1)
+                                        ;(text-scale-adjust 1)
           )))))
 
 (defun get-answer-part (line)
@@ -138,8 +138,8 @@ If slide buffer is active switch to lesson buffer an search new question"
 Whole line otherwise"
   (let ((delimiter (lang-delimiter-position line)))
     (setq res (if (null delimiter)
-        line
-        (substring line 0 delimiter)))
+                  line
+                (substring line 0 delimiter)))
     (string-trim res)))
 
 (defun get-question-part (line)
@@ -151,10 +151,10 @@ Empty line otherwise"
       (string-trim (substring line (+ 1 delimiter))))))
 
 (defun clear-org-markers (str)
-    "Clear org markers like numbering, [@11] /*_"
-    (setq str (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
-    (setq str (replace-regexp-in-string "^[0-9]*\\.\s" "" str))
-    (setq str (replace-regexp-in-string "[/_\\*]" "" str)))
+  "Clear org markers like numbering, [@11] /*_"
+  (setq str (replace-regexp-in-string "\\[@.*\\]\s*" "" str))
+  (setq str (replace-regexp-in-string "^[0-9]*\\.\s" "" str))
+  (setq str (replace-regexp-in-string "[/_\\*]" "" str)))
 
 (defun s ()
   "Setup `org-mode' for lesson"
@@ -174,7 +174,7 @@ Empty line otherwise"
   (set-frame-size (selected-frame) 150 60)
   (set-face-attribute 'org-level-2 nil :foreground "DarkGreen")
   (add-to-list 'org-emphasis-alist
-             '("~" (:foreground "OrangeRed"))))
+               '("~" (:foreground "OrangeRed"))))
 ;;
 ;; Lesson to json converter
 ;;
@@ -184,22 +184,21 @@ to json question item (use ; to split question and answer). All other strings
 will convert to json point type."
   (interactive)
   (let ((from-file (read-file-name "To json:" (buffer-file-name)))
-         (to-file (read-file-name "Save to:" nil nil nil (concat (file-name-sans-extension (buffer-name)) ".json"))))
-         (message to-file)
-         (setq input-lines (read-lesson from-file))
-         (write-json input-lines to-file)
-         (find-file to-file)))
+        (to-file (read-file-name "Save to:" nil nil nil (concat (file-name-sans-extension (buffer-name)) ".json"))))
+    (setq input-lines (read-lesson from-file))
+    (write-json input-lines to-file)
+    (find-file to-file)))
 
 (defun read-lesson (file)
   "Read `file'.
 Returns list of strings"
   (split-string
-          (with-temp-buffer
-           (insert-file-contents file)
-           (buffer-substring-no-properties
-            (point-min)
-            (point-max)))
-          "\n" t))
+   (with-temp-buffer
+     (insert-file-contents file)
+     (buffer-substring-no-properties
+      (point-min)
+      (point-max)))
+   "\n" t))
 
 (defun write-json (lines file)
   "Writes `lines' to `file'"
@@ -231,8 +230,8 @@ question. If delimiter omited question part will empty"
       \"startTime\": \":\"
     },")
   (format template
-   (get-question-part str)
-   (clear-org-markers (get-answer-part str))))
+          (get-question-part str)
+          (clear-org-markers (get-answer-part str))))
 
 (defun get-point (str)
   "Returns prepared json point item"
@@ -252,7 +251,6 @@ question. If delimiter omited question part will empty"
         str
       (progn
         (setq tag (substring str found (+ found 1)))
-;        (message tag)
         (setq t-s "") (setq t-e "")
         (cond ((equal "*" tag) (setq t-s "<b>") (setq t-e "</b>"))
               ((equal "_" tag) (setq t-s "<u>") (setq t-e "</u>"))
