@@ -20,6 +20,7 @@
 	  '(lambda()
 	     (eldoc-mode 1) 
 	     (outline-minor-mode 1)
+       (indent-guide-mode 1)
        (yas-minor-mode)
 	     ))
 (add-hook 'emacs-lisp-mode-hook 'my-lisp-mode-hook)

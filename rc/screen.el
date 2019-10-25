@@ -48,14 +48,18 @@
 ;; (load-theme 'mccarthy t)
 ;; (load-theme 'Deviant t) ;;https://github.com/Corsair/emacs-deviant-theme/blob/master/Deviant-theme.el
 
+;;; Highlight indentation
+
 ;; highlight-indentation-mode colors
-(add-hook 'highlight-indentation-mode-hook
-          (lambda ()
-            ;; (set-face-background 'highlight-indentation-face "gray25")
-            ;; (set-face-background 'highlight-indentation-current-column-face "gray25")
-            (set-face-background 'highlight-indentation-face "Khaki2")
-            (set-face-background 'highlight-indentation-current-column-face "Khaki3")
-            ))
+;; (add-hook 'highlight-indentation-mode-hook
+;;           (lambda ()
+;;             ;; (set-face-background 'highlight-indentation-face "gray25")
+;;             ;; (set-face-background 'highlight-indentation-current-column-face "gray25")
+;;             (set-face-background 'highlight-indentation-face "Khaki2")
+;;             (set-face-background 'highlight-indentation-current-column-face "Khaki3")
+;;             ))
+(setq indent-guide-delay 0.5)
+
 ;;Font
 (require 'font-lock)
 (setq ttf-font "-*-Inconsolata LGC-normal-r-*-*-15-*-*-*-c-*-iso8859-1")
