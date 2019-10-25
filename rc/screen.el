@@ -41,13 +41,12 @@
 ;(set-default 'truncate-lines t) ;;Long lines not trunkate
 
 ;; Color theme
+;; (load-theme 'nova t)
 (load-theme 'sunny-day t)
-;(load-theme 'material t)
-;(add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
-;(load-theme 'monokai t)
-;(load-theme 'alect-light t)
-;(load-theme 'mccarthy t)
-;(load-theme 'Deviant t) ;;https://github.com/Corsair/emacs-deviant-theme/blob/master/Deviant-theme.el
+;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
+;; (load-theme 'monokai t)
+;; (load-theme 'mccarthy t)
+;; (load-theme 'Deviant t) ;;https://github.com/Corsair/emacs-deviant-theme/blob/master/Deviant-theme.el
 
 ;; highlight-indentation-mode colors
 (add-hook 'highlight-indentation-mode-hook
