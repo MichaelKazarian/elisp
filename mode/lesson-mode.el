@@ -125,12 +125,13 @@ If slide buffer is active switch to lesson buffer an search new question"
         (generate-new-buffer slide-name)
         (with-current-buffer slide-name
           (funcall 'lesson-mode)
-          (text-scale-set 3)
+          (text-scale-set 5)
           (split-window-right)
           (switch-to-buffer-other-window slide-name)
+          (setq org-hide-emphasis-markers t)
           (enlarge-window-horizontally 35)
           (other-window 1)
-                                        ;(text-scale-adjust 1)
+          ; (text-scale-adjust 1)
           )))))
 
 (defun get-answer-part (line)
@@ -159,10 +160,9 @@ Empty line otherwise"
 (defun s ()
   "Setup `org-mode' for lesson"
   ;; (set-face-background 'hl-line "NavajoWhite")
-  (set-face-attribute hl-line-face nil :underline nil)
   (display-line-numbers-mode -1)
   (olivetti-mode -1)
-  (setq org-hide-emphasis-markers t)
+  ; (setq org-hide-emphasis-markers t)
   ;; (load-theme 'dichromacy t)
 
   ;; make part of a word bold
