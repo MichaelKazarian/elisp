@@ -32,6 +32,16 @@
   :type 'string
   :group 'lesson-mode)
 
+(defcustom json-point-template "\n    {
+      \"itemType\": \"point\",
+      \"itemText\": \"%s\",
+      \"startTime\": \":\"
+    },"
+  "Json point template"
+  :type 'string
+  :group 'lesson-mode
+  )
+
 ;;
 ;; Core
 ;;
@@ -239,12 +249,7 @@ question. If delimiter omited question part will empty"
 
 (defun get-point (str)
   "Returns prepared json point item"
-  (setq template "\n    {
-      \"itemType\": \"point\",
-      \"itemText\": \"%s\",
-      \"startTime\": \":\"
-    },")
-  (format template (replace-org-to-html str)))
+  (format json-point-template (replace-org-to-html str)))
 
 (defun replace-org-to-html (str)
   "Replaces /*_ org formating to <i></i>, <b></b>, <u></u> accordingly"
@@ -289,6 +294,7 @@ question. If delimiter omited question part will empty"
     ["New slide" lesson-new-slide]
     ["Send line to slide" lesson-slide-swich]
     ["Word or region blink to slide" word-region-blink-to-slide]
+    ["Search word or region" lesson-grep]
     "---"
     ["Version" lesson-mode-version]))
 
@@ -308,14 +314,16 @@ question. If delimiter omited question part will empty"
   (interactive)
   (let* ((cur-word (region-or-point))
          ; (cmd (concat "grep -nH -r --exclude='TAGS' --include='*.h' --include='*.cpp' --include='*.pl' --include='*.c' -e " cur-word " /home/alex/code"))
-         (cmd (concat "find . -type f -exec grep --color -nH --null -e '" cur-word "' \\{\\} +")))
+         (cmd (concat "find . -type f -exec grep --color -nH --null -e \"" cur-word "\" \\{\\} +")))
     (grep-apply-setting 'grep-command cmd)
     (grep-find cmd)))
 
-(add-hook 'json-mode-hook
-          '(lambda()  
-             (global-set-key (kbd"C-<f7>") 'lesson-grep)))
-
+(defun json-point ()
+  "Generate json point from value at point and copy it to buffer"
+  (interactive)
+  (let ((s (format json-point-template
+                   (concat "<b>" (region-or-point) "</b> "))))
+    (kill-new s)))
 
 ;;
 ;; On Load
