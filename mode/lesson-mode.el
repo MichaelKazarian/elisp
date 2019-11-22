@@ -80,14 +80,18 @@ number. If question found send message after `message-time-delay' sec."
                                         ;(next-window 1)
   )
 
+(defun region-or-point ()
+  (if (region-active-p)
+      (buffer-substring (region-beginning) (region-end))
+    (thing-at-point 'word)) ; word-at-point can be replacement
+  )
+
 (defun word-region-blink-to-slide ()
   "Temporary send current word or region to slide buffer and switch to it.
 Clear this line after `word-preview-time and switch to previous buffer."
   (interactive)
-  (let ((str (word-at-point))
+  (let ((str (region-or-point))
         (current-buffer (buffer-name)))
-    (if (region-active-p)
-        (setq str (buffer-substring (region-beginning) (region-end))))
     (with-current-buffer "slide"
       (progn
         (message (region-active-p))
@@ -273,6 +277,7 @@ question. If delimiter omited question part will empty"
     ;; key bindings
     (define-key map (kbd "<f5>") 'lesson-slide-swich)
     (define-key map (kbd "<f6>") 'word-region-blink-to-slide)
+    (define-key map (kbd "C-<f7>") 'lesson-grep)
     (define-key map (kbd "<f8>") 'clear-line-go-to-lesson)
     (define-key map (kbd "<f9>") 'lesson-new-slide)
     map)
@@ -294,6 +299,23 @@ question. If delimiter omited question part will empty"
 (add-hook 'lesson-mode-hook 's)
 (add-hook 'lesson-mode-hook 'flyspell-mode)
 (provide 'lesson-mode)
+
+;;
+;; Utils
+;;
+(defun lesson-grep ()
+  "Setting up grep-command using current word under cursor as a search string"
+  (interactive)
+  (let* ((cur-word (region-or-point))
+         ; (cmd (concat "grep -nH -r --exclude='TAGS' --include='*.h' --include='*.cpp' --include='*.pl' --include='*.c' -e " cur-word " /home/alex/code"))
+         (cmd (concat "find . -type f -exec grep --color -nH --null -e '" cur-word "' \\{\\} +")))
+    (grep-apply-setting 'grep-command cmd)
+    (grep-find cmd)))
+
+(add-hook 'json-mode-hook
+          '(lambda()  
+             (global-set-key (kbd"C-<f7>") 'lesson-grep)))
+
 
 ;;
 ;; On Load
