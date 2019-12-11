@@ -322,9 +322,10 @@ question. If delimiter omited question part will empty"
 (defun json-point ()
   "Generate json point from value at point and copy it to buffer"
   (interactive)
-  (let ((s (format json-point-template
-                   (concat "<b>" (region-or-point) "</b> "))))
-    (kill-new s)))
+  (let ((s (concat "<b>" (region-or-point) "</b> ")))
+    (deactivate-mark)
+    (kill-new (format json-point-template s))
+    (message (concat "json for (" s ") was created"))))
 
 ;;
 ;; On Load
