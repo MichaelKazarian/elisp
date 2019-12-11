@@ -22,6 +22,8 @@
             (whitespace-mode 1)
             (local-set-key (kbd "\e\ep") 'lesson-json-point)
             (local-set-key [f8] 'flycheck-mode)
+            (local-set-key (kbd "C-<f7>") 'lesson-grep)
+            (local-set-key (kbd "\e\ep") 'json-point)
             ))
 
 
