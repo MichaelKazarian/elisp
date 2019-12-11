@@ -289,6 +289,7 @@ question. If delimiter omited question part will empty"
     ["New slide" lesson-new-slide]
     ["Send line to slide" lesson-slide-swich]
     ["Word or region blink to slide" word-region-blink-to-slide]
+    ["Lesson to json" lesson-to-json]
     "---"
     ["Version" lesson-mode-version]))
 
