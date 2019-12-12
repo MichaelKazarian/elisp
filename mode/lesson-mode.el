@@ -315,7 +315,7 @@ question. If delimiter omited question part will empty"
   (interactive)
   (let* ((cur-word (region-or-point))
          ; (cmd (concat "grep -nH -r --exclude='TAGS' --include='*.h' --include='*.cpp' --include='*.pl' --include='*.c' -e " cur-word " /home/alex/code"))
-         (cmd (concat "find . -type f -exec grep --color -nH --null -e \"" cur-word "\" \\{\\} +")))
+         (cmd (concat "find . -type f -exec grep -i --color -nH --null -e \"" cur-word "\" \\{\\} +")))
     (grep-apply-setting 'grep-command cmd)
     (grep-find cmd)))
 
