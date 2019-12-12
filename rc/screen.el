@@ -43,8 +43,12 @@
 ;(set-default 'truncate-lines t) ;;Long lines not trunkate
 
 ;; Color theme
+(setq host (system-name))
+(cond ((equal host "asm3") (load-theme 'kaolin-eclipse t))
+      (t (load-theme 'sunny-day t)))
 ;; (load-theme 'nova t)
-(load-theme 'sunny-day t)
+;; (load-theme 'kaolin-galaxy t)
+;; (load-theme 'sunny-day t)
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
 ;; (load-theme 'mccarthy t)
