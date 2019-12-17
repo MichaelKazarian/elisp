@@ -44,7 +44,7 @@
 
 ;; Color theme
 (setq host (system-name))
-(cond ((equal host "asm3") (load-theme 'kaolin-eclipse t))
+(cond ((equal host "asm3") (load-theme 'kaolin-aurora t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
