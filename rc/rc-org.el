@@ -25,7 +25,6 @@
   (font-lock-mode)
   ;; (linum-mode 1)
   (display-line-numbers-mode)
-  (olivetti-mode 1)
   (hl-line-mode 1)
   ;; (setq org-hide-emphasis-markers t) ;Hiding markup elements in org-mode
   )
