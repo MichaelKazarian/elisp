@@ -21,7 +21,11 @@
   (local-set-key (kbd "\e\em") 'company-complete)
   (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
   (local-set-key (kbd "<f7>") 'highlight-symbol-next-in-defun)
-  (local-set-key (kbd "S-<f7>") 'highlight-symbol-prev-in-defun))
+  (local-set-key (kbd "S-<f7>") 'highlight-symbol-prev-in-defun)
+  ;; git-guttre keys
+  (local-set-key (kbd "\e\eg=") 'git-gutter:popup-hunk)
+  (local-set-key (kbd "\e\egs") 'git-gutter:stage-hunk)
+  (local-set-key (kbd "\e\egr") 'git-gutter:revert-hunk))
 
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
