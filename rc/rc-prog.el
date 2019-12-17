@@ -64,20 +64,20 @@
     (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
     ))
 
-;; ;;; Add markers to the fringe for regions foldable by hideshow.el
-;; (autoload 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
+;;; Add markers to the fringe for regions foldable by hideshow.el
+(autoload 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
 
-;; (autoload 'hideshowvis-minor-mode
-;;   "hideshowvis"
-;;   "Will indicate regions foldable with hideshow in the fringe."
-;;   'interactive)
+(autoload 'hideshowvis-minor-mode
+  "hideshowvis"
+  "Will indicate regions foldable with hideshow in the fringe."
+  'interactive)
 
-;; (dolist (hook (list 'emacs-lisp-mode-hook
-;;                     'java-mode-hook
-;;                     'python-mode-hook
-;;                     'c-mode-hook))
-;;   (add-hook hook 'hideshowvis-enable))
-;; ;;;
+(dolist (hook (list 'emacs-lisp-mode-hook
+                    'java-mode-hook
+                    'python-mode-hook
+                    'c-mode-hook))
+  (add-hook hook 'hideshowvis-enable))
+;;;
 
 (setq w3m-default-display-inline-images t) ;; w3m show pictures
 
