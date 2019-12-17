@@ -8,6 +8,11 @@
 (package-initialize)
 
 
+;; Some useful packages:
+;; color-theme-sanityinc-solarized doom-themes nova-theme sunny-day-theme
+;; imenu-list
+;; olivetti
+
 ;; My personal info
 ;(setq frame-title-format "emacs@Michael.Kazarian")
 ;(setq user-full-name "Michael Kazarian")
