@@ -175,8 +175,8 @@ Empty line otherwise"
   "Setup `org-mode' for lesson"
   ;; (set-face-background 'hl-line "NavajoWhite")
   (display-line-numbers-mode -1)
-  (olivetti-mode -1)
-  ; (setq org-hide-emphasis-markers t)
+  ;; (olivetti-mode -1)
+  ;; (setq org-hide-emphasis-markers t)
   ;; (load-theme 'dichromacy t)
 
   ;; make part of a word bold
