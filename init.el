@@ -13,7 +13,8 @@
 ;; imenu-list
 ;; olivetti
 
-;(setq custom-file (concat user-emacs-directory "/custom.el"))
+;; keep init.el clean. Write to custom.el
+(setq custom-file (concat user-emacs-directory "/custom.el"))
 
 ;; My personal info
 ;(setq frame-title-format "emacs@Michael.Kazarian")
