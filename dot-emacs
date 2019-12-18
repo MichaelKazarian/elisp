@@ -9,9 +9,11 @@
 
 
 ;; Some useful packages:
-;; color-theme-sanityinc-solarized doom-themes nova-theme sunny-day-theme
+;; color-theme-sanityinc-solarized doom-themes nova-theme
 ;; imenu-list
 ;; olivetti
+
+;(setq custom-file (concat user-emacs-directory "/custom.el"))
 
 ;; My personal info
 ;(setq frame-title-format "emacs@Michael.Kazarian")
@@ -48,3 +50,4 @@
 (load "~/elisp/rc/google.el")
 ;; (load "~/elisp/rc/rc-nov.el")
 ;; (load "~/elisp/rc/rc-regex.el")
+

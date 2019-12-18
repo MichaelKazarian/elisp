@@ -27,4 +27,49 @@
             (local-set-key [f8] 'flycheck-mode)
             ))
 
+(setq safe-local-variable-values
+   (quote
+    ((python-shell-interpreter . "python3")
+     (elpy-rpc-virtualenv-path . "~/.virtualenvs/env3")
+     (python-indent-indent-offset . 4)
+     (python-shell-interpreter-args . "-i")
+     (python-shell-interpreter . "python2")
+     (elpy-rpc-virtualenv-path . "~/.virtualenvs/env2")
+     (eval lambda nil
+           (git-gutter-mode)))))
+
+;; elpy with .dir-locals.el
+;; python3 -m venv env3
+;; source env3/bin/activate
+;; pip install flake8 yapf autopep8 jedi rope
+
+;; ((nil . (
+;;          (pyvenv-workon . "env3")
+;;          (elpy-rpc-virtualenv-path . "~/.virtualenvs/env3")
+;;          ;; (elpy-rpc-pythonpath . "~/.virtualenvs/env3/bin")
+;;          (elpy-rpc-python-command . "python3")
+;;          (python-shell-interpreter . "python3")
+;;          (python-shell-interpreter-args . "-i")
+;;          (python-indent-guess-indent-offset . 4)
+;;          ))
+;;  (python-mode . ((eval . (lambda ()
+;;                            (git-gutter-mode))))))
+
+;; ==========================================
+;; virtualenv env2
+;; source env2/bin/activate
+;; pip install flake8 yapf autopep8 jedi rope
+
+;; ((nil . (
+;;          (pyvenv-workon . "env2")
+;;          (elpy-rpc-virtualenv-path . "~/.virtualenvs/env2")
+;;          ;; (elpy-rpc-pythonpath . "~/.virtualenvs/env2/bin")
+;;          (elpy-rpc-python-command . "python2")
+;;          (python-shell-interpreter . "python2")
+;;          (python-shell-interpreter-args . "-i")
+;;          (python-indent-guess-indent-offset . 4)
+;;          ))
+;;  (python-mode . ((eval . (lambda ()
+;;                            (git-gutter-mode))))))
+
 ;;; emacs-rc-python.el ends here
