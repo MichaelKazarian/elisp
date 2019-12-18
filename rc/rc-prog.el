@@ -35,10 +35,10 @@
 ;; highlight-indentation-mode colors
 (add-hook 'highlight-indentation-mode-hook
           (lambda ()
-            ;; (set-face-background 'highlight-indentation-face "gray25")
-            ;; (set-face-background 'highlight-indentation-current-column-face "gray25")
-            (set-face-background 'highlight-indentation-face "Khaki2")
-            (set-face-background 'highlight-indentation-current-column-face "Khaki3")
+            (set-face-background 'highlight-indentation-face "gray25")
+            (set-face-background 'highlight-indentation-current-column-face "gray25")
+            ;; (set-face-background 'highlight-indentation-face "Khaki2")
+            ;; (set-face-background 'highlight-indentation-current-column-face "Khaki3")
             ))
 
 ;; Highlight currentline settings
