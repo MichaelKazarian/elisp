@@ -45,6 +45,7 @@
 ;; Color theme
 (setq host (system-name))
 (cond ((equal host "asm3") (load-theme 'kaolin-aurora t))
+      ((equal host "Mac-Admin.local") (load-theme 'kaolin-aurora t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
@@ -53,16 +54,17 @@
 
 ;;Font
 (require 'font-lock)
-(setq ttf-font "-*-Inconsolata LGC-normal-r-*-*-15-*-*-*-c-*-iso8859-1")
-;(setq ttf-font "-*-PT Mono-normal-r-*-*-14-*-*-*-c-*-iso8859-1")
-;(setq ttf-font "-*-Consolas-normal-r-*-*-16-*-*-*-c-*-iso8859-1")
-;(setq ttf-font "-*-DejaVu Sans Mono-normal-r-*-*-15-*-*-*-c-*-iso8859-1")
-(cond ((equal system-type 'gnu/linux)
-       (if (>= emacs-major-version 23)
-           (set-default-font ttf-font)
-         ;;(set-default-font "-misc-*-*-*-*-*-18-*-*-*-*-*-*")
-         ))
-      ((equal system-type 'windows-nt) (set-default-font ttf-font)))
+
+(cond ((equal system-type 'gnu/linux) (setq ttf-font "Inconsolata LGC"))
+      ((equal system-type 'darwin) (setq ttf-font "Inconsolata"))
+      (t (setq ttf-font "Consolas")))
+
+(cond ((equal system-type 'gnu/linux) (setq ttf-font-s 140))
+      ((equal system-type 'darwin) (setq ttf-font-s 180))
+      (t (setq ttf-font-s 140)))
+
+(set-face-attribute 'default nil
+                    :family ttf-font :height ttf-font-s :weight 'normal)
 
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
