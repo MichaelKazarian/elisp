@@ -59,9 +59,9 @@
       ((equal system-type 'darwin) (setq ttf-font "Inconsolata"))
       (t (setq ttf-font "Consolas")))
 
-(cond ((equal system-type 'gnu/linux) (setq ttf-font-s 140))
+(cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
       ((equal system-type 'darwin) (setq ttf-font-s 180))
-      (t (setq ttf-font-s 140)))
+      (t (setq ttf-font-s 120)))
 
 (set-face-attribute 'default nil
                     :family ttf-font :height ttf-font-s :weight 'normal)
