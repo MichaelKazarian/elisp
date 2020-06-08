@@ -34,7 +34,11 @@
 (global-set-key [?\C-ц] 'kill-region)      ; C-w
 (global-set-key [?\C-н] 'yank)      ; C-y
 (global-set-key [?\C-е] 'move-end-of-line)      ; C-e
-(global-set-key [?\C-а] 'move-beginning-of-line)        ; C-a
+(global-set-key [?\C-ф] 'move-beginning-of-line)        ; C-a
+(global-set-key [?\C-и] 'backward-char)     ; C-b
+(global-set-key [?\C-а] 'forward-char) ; C-
+(global-set-key [?\M-ф] 'forward-word) ;M-a
+(global-set-key [?\M-и] 'backward-word) ;M-e
 (global-set-key [?\C-л] 'kill-line)     ; C-k
 
 ;;; emacs-rc-kbd.el ends here
