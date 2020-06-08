@@ -12,6 +12,8 @@
 ;;
 ;; Customizable Variables
 ;;
+(require 'popup)
+
 (defconst lesson-mode-version "0.1"
   "The version of `lesson-mode'.")
 
@@ -95,6 +97,31 @@ number. If question found send message after `message-time-delay' sec."
       (buffer-substring (region-beginning) (region-end))
     (thing-at-point 'word)) ; word-at-point can be replacement
   )
+
+(defun word-region-blink-tip ()
+  "http://ergoemacs.org/emacs/elisp_define_face.html"
+  (interactive)
+  (let ((str (concat "  " (region-or-point)))
+        (current-buffer (buffer-name)))
+      (progn
+        (switch-to-buffer-other-window "slide")
+        (face-spec-set
+         'popup-tip-face
+         '((t :foreground "OrangeRed"
+              :background "NavajoWhite"
+              :height 350
+              :box nil
+              ))
+         'face-defface-spec)
+        (end-of-buffer)
+        (insert "\n ")
+        (move-beginning-of-line nil)
+        (setq qq
+              (popup-tip str :margin 1 :nowait t :around nil))
+        (sit-for word-preview-time)
+        (popup-delete qq)
+        (clear-line-go-to-lesson))
+      (deactivate-mark)))
 
 (defun word-region-blink-to-slide ()
   "Temporary send current word or region to slide buffer and switch to it.
@@ -281,7 +308,7 @@ question. If delimiter omited question part will empty"
   (let ((map (make-sparse-keymap)))
     ;; key bindings
     (define-key map (kbd "<f5>") 'lesson-slide-swich)
-    (define-key map (kbd "<f6>") 'word-region-blink-to-slide)
+    (define-key map (kbd "<f6>") 'word-region-blink-tip)
     (define-key map (kbd "C-<f7>") 'lesson-grep)
     (define-key map (kbd "<f8>") 'clear-line-go-to-lesson)
     (define-key map (kbd "<f9>") 'lesson-new-slide)
