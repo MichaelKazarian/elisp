@@ -34,6 +34,17 @@
   :type 'string
   :group 'lesson-mode)
 
+(defcustom translate-from "uk"
+  "Translate from this language"
+  :type 'string
+  :group 'lesson-mode)
+
+(defcustom translate-to "ru"
+  "Translate to this language"
+  :type 'string
+  :group 'lesson-mode)
+
+
 (defcustom json-point-template "\n    {
       \"itemType\": \"point\",
       \"itemText\": \"%s\",
@@ -320,7 +331,8 @@ question. If delimiter omited question part will empty"
   '("Lesson"
     ["New slide" lesson-new-slide]
     ["Send line to slide" lesson-slide-swich]
-    ["Word or region blink to slide" word-region-blink-to-slide]
+    ["Word or region blink" word-region-blink-tip]
+    ["Translate current line" translate-org-current-line]
     ["Search word or region" lesson-grep]
     ["Lesson to json" lesson-to-json]
     "---"
@@ -377,8 +389,8 @@ question. If delimiter omited question part will empty"
     (replace-regexp-in-string question translation line)))
 
 (defun g-translate (str)
-  "Returns translated `str' from uk to ru"
-  (let ((gtr-json (google-translate-request "uk" "ru" str)))
+  "Returns translated `str' from `translate-from' to `translate-to'"
+  (let ((gtr-json (google-translate-request translate-from translate-to str)))
     (google-translate-json-translation gtr-json)))
 ;;
 ;; On Load
