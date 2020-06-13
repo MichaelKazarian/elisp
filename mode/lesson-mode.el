@@ -17,7 +17,7 @@
 (defconst lesson-mode-version "0.1"
   "The version of `lesson-mode'.")
 
-(defcustom message-time-delay 3
+(defcustom message-time-deLay 3
   "Delay time before answer hint."
   :type 'integer
   :safe 'integerp
@@ -355,6 +355,10 @@ question. If delimiter omited question part will empty"
     (kill-new (format json-point-template s))
     (message (concat "json for (" s ") was created"))))
 
+(defun g-translate (str)
+  (let ((gtr-json (google-translate-request "en" "ru" str)))
+      (google-translate-json-translation gtr-json)
+      ))
 ;;
 ;; On Load
 ;;
