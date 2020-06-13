@@ -355,10 +355,28 @@ question. If delimiter omited question part will empty"
     (kill-new (format json-point-template s))
     (message (concat "json for (" s ") was created"))))
 
+(defun translate-org-current-line ()
+  (interactive)
+  (let* ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+         (question (get-question-part line))
+         (translation (if (not (string-empty-p question))
+                          (translate-org-line line)
+                        "")))
+    (if (not (string-empty-p translation))
+        (replace-current-line translation))))
+
+(defun replace-current-line (new-line)
+  (kill-whole-line)
+          (insert (concat translation "\n")))
+
+(defun translate-org-line (line)
+  (let* ((question (get-question-part line))
+         (translation (g-translate question)))
+    (replace-regexp-in-string question translation line)))
+
 (defun g-translate (str)
-  (let ((gtr-json (google-translate-request "en" "ru" str)))
-      (google-translate-json-translation gtr-json)
-      ))
+  (let ((gtr-json (google-translate-request "uk" "ru" str)))
+    (google-translate-json-translation gtr-json)))
 ;;
 ;; On Load
 ;;
