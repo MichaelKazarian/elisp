@@ -356,6 +356,7 @@ question. If delimiter omited question part will empty"
     (message (concat "json for (" s ") was created"))))
 
 (defun translate-org-current-line ()
+  "Replaces current line with line contains translated question part"
   (interactive)
   (let* ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
          (question (get-question-part line))
@@ -367,14 +368,16 @@ question. If delimiter omited question part will empty"
 
 (defun replace-current-line (new-line)
   (kill-whole-line)
-          (insert (concat translation "\n")))
+  (insert (concat translation "\n")))
 
 (defun translate-org-line (line)
+  "Returns lesson line contains translated question part"
   (let* ((question (get-question-part line))
          (translation (g-translate question)))
     (replace-regexp-in-string question translation line)))
 
 (defun g-translate (str)
+  "Returns translated `str' from uk to ru"
   (let ((gtr-json (google-translate-request "uk" "ru" str)))
     (google-translate-json-translation gtr-json)))
 ;;
