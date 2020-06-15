@@ -13,6 +13,8 @@
 ;; Customizable Variables
 ;;
 (require 'popup)
+(require 'google-translate)
+(require 'subr-x)
 
 (defconst lesson-mode-version "0.1"
   "The version of `lesson-mode'.")
@@ -112,7 +114,7 @@ number. If question found send message after `message-time-delay' sec."
 (defun word-region-blink-tip ()
   "http://ergoemacs.org/emacs/elisp_define_face.html"
   (interactive)
-  (let ((str (concat "  " (region-or-point)))
+  (let ((str (get-blink-str))
         (current-buffer (buffer-name)))
       (progn
         (switch-to-buffer-other-window "slide")
@@ -133,6 +135,17 @@ number. If question found send message after `message-time-delay' sec."
         (popup-delete qq)
         (clear-line-go-to-lesson))
       (deactivate-mark)))
+
+(defun get-blink-str ()
+  (let* ((str (downcase (string-trim (region-or-point))))
+         (dic-file (concat (get-dic-dir) str ".txt")))
+    (if (file-exists-p dic-file)
+        (progn
+          (setq str (get-string-from-file dic-file))
+          (setq str (string-trim str))
+          (setq str (replace-regexp-in-string  "<\/?[bi]>" "" str))
+          (setq str (replace-regexp-in-string "<br\s*\/\s*>" "\n  " str))))
+    (concat "  " str)))
 
 (defun word-region-blink-to-slide ()
   "Temporary send current word or region to slide buffer and switch to it.
@@ -378,10 +391,6 @@ question. If delimiter omited question part will empty"
     (if (not (string-empty-p translation))
         (replace-current-line translation))))
 
-(defun replace-current-line (new-line)
-  (kill-whole-line)
-  (insert (concat translation "\n")))
-
 (defun translate-org-line (line)
   "Returns lesson line contains translated question part"
   (let* ((question (get-question-part line))
@@ -392,6 +401,22 @@ question. If delimiter omited question part will empty"
   "Returns translated `str' from `translate-from' to `translate-to'"
   (let ((gtr-json (google-translate-request translate-from translate-to str)))
     (google-translate-json-translation gtr-json)))
+
+(defun replace-current-line (new-line)
+  (kill-whole-line)
+  (insert (concat translation "\n")))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun get-dic-dir ()
+  (concat (file-name-as-directory (concat
+   (file-name-directory buffer-file-name)
+   "dic"))))
+
 ;;
 ;; On Load
 ;;
