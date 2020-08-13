@@ -10,7 +10,7 @@
 
 ;; Some useful packages:
 ;; color-theme-sanityinc-solarized doom-themes nova-theme
-;; imenu-list
+;; imenu-list map e2wm
 ;; olivetti
 
 ;; keep init.el clean. Write to custom.el
