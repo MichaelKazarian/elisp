@@ -44,8 +44,8 @@
 
 ;; Color theme
 (setq host (system-name))
-(cond ((equal host "asm3") (load-theme 'kaolin-aurora t))
-      ((equal host "Mac-Admin.local") (load-theme 'kaolin-aurora t))
+(cond ((equal host "asm3") (load-theme 'kaolin-light t))
+      ((equal host "Mac-Admin.local") (load-theme 'kaolin-light t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
