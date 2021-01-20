@@ -14,10 +14,13 @@
 
 (defun my-web-mode-hook ()
   "Hooks for Web mode."
+  (highlight-symbol-mode nil) ;; Perhaps highlight-thing.el will better?
+  (highlight-symbol-nav-mode nil)
+  
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
-  (setq web-mode-enable-current-column-highlight t)
+  ;; (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-enable-current-element-highlight t)
   (set (make-local-variable 'company-backends)
        '(company-css company-web-html company-yasnippet company-files))
