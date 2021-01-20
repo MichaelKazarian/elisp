@@ -39,6 +39,7 @@
            (git-gutter-mode)))))
 
 ;; elpy with .dir-locals.el
+;; apt install python-virtualenv
 ;; python3 -m venv env3
 ;; source env3/bin/activate
 ;; pip install flake8 yapf autopep8 jedi rope
