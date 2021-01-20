@@ -22,6 +22,8 @@
 ;(setq my-author-name (getenv "USER"))
 ;(setq user-full-name (getenv "USER"))
 
+(setq tramp-default-method "ssh")
+
 (add-to-list 'load-path "~/elisp/mode")
 (add-to-list 'load-path "~/elisp/rc")
 (load "~/elisp/rc/editing.el")
