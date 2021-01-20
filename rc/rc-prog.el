@@ -35,8 +35,8 @@
 ;; highlight-indentation-mode colors
 (add-hook 'highlight-indentation-mode-hook
           (lambda ()
-            (set-face-background 'highlight-indentation-face "gray80")
-            (set-face-background 'highlight-indentation-current-column-face "gray80")
+            ;; (set-face-background 'highlight-indentation-face "gray80")
+            ;; (set-face-background 'highlight-indentation-current-column-face "gray80")
             ;; (set-face-background 'highlight-indentation-face "Khaki2")
             ;; (set-face-background 'highlight-indentation-current-column-face "Khaki3")
             ))
