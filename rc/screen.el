@@ -45,7 +45,7 @@
 ;; Color theme
 (setq host (system-name))
 (cond ((equal host "asm-3") (load-theme 'kaolin-galaxy t))
-      ((equal host "Mac-Admin.local") (load-theme 'kaolin-light t))
+      ((equal host "MacBook-Pro-Admin.local") (load-theme 'kaolin-galaxy t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
@@ -56,7 +56,7 @@
 (require 'font-lock)
 
 (cond ((equal system-type 'gnu/linux) (setq ttf-font "Inconsolata LGC"))
-      ((equal system-type 'darwin) (setq ttf-font "Inconsolata"))
+      ((equal system-type 'darwin) (setq ttf-font "Inconsolata LGC"))
       (t (setq ttf-font "Consolas")))
 
 (cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
