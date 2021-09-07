@@ -43,6 +43,7 @@
 (load "~/elisp/rc/java.el")
 (load "~/elisp/rc/markdown.el")
 (load "~/elisp/rc/rc-org.el")
+(load "~/elisp/rc/rc-make.el")
 
 ;; others tools
 (load "~/elisp/rc/auto-insert.el")
