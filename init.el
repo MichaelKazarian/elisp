@@ -32,7 +32,7 @@
 (load "~/elisp/rc/rc-prog.el")
 ;; programming tools & languages
 (load "~/elisp/rc/lisp.el")
-;(load "~/elisp/rc/tags.el")
+(load "~/elisp/rc/tags.el")
 (load "~/elisp/rc/rc-cedet.el")
 (load "~/elisp/rc/rc-ecb.el")
 (load "~/elisp/rc/rc-ispell.el")
