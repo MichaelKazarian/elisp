@@ -13,23 +13,56 @@
  Returns the path to it or nil if not found."
   (locate-dominating-file default-directory file-to-find))
 
-(defun ctags-update ()
+(defun call-etags-universal (tags-file)
+  "Calls ctags-universal to create/update TAGS file"
+  (call-process "ctags-universal"  nil nil nil
+                "-f" tags-file "-R" "-e"
+                " --exclude='*.elc'"
+                " --exclude='*.pyc'"
+                " --exclude='*.class'"
+                " --exclude='*.jar'"
+                " --exclude='.git'"
+                " --exclude='.hg'"
+                " --exclude='.svn'"
+                (file-name-directory tags-file)))
+
+(defun call-etags-create (tags-file)
+  "Calls emacs built-in ctags to create TAGS file"
+  (call-process "/bin/bash"
+                nil nil nil
+                "-c"
+                (concat "find . -name '*.c*' -print -or -name '*.h'"
+                        " -print -or -name '*.py'"
+                        " -print -or -name '*.el' -print"
+                        " | "
+                        "/snap/emacs/current/usr/bin/ctags -o "
+                        tags-file " -")))
+
+(defun etags-tag-create ()
+  "Create TAGS file in the current directory using emacs built-in ctags."
+  (interactive)
+  (let ((tags-file (expand-file-name "TAGS")))
+    ;; (call-etags-universal tags-file)
+    (call-etags-create tags-file)))
+
+(defun call-etags-update (tags-file)
+  "Calls emacs ctags to update tags-file"
+  (call-process "/bin/bash"
+                nil nil nil
+                "-c"
+                (concat "/snap/emacs/current/usr/bin/ctags -a -o "
+                        tags-file " " default-directory "*.*")))
+
+(defun etags-update ()
+  "Searches TAGS file in the upward directories starting from current and update
+ if found."
   (interactive)
   (let ((tags-file (expand-file-name (find-file-upwards "TAGS"))))
     (when tags-file
       (setq tags-file (concat tags-file "TAGS"))
-      (message tags-file)
-      (message (file-name-directory tags-file))
-      (call-process "ctags-universal"  nil nil nil
-               "-f" tags-file "-R" "-e"
-               " --exclude='*.elc'"
-               " --exclude='*.pyc'"
-               " --exclude='*.class'"
-               " --exclude='*.jar'"
-               " --exclude='.git'"
-               " --exclude='.hg'"
-               " --exclude='.svn'"
-               (file-name-directory tags-file)))))
+      ;; (call-ctags-universal tags-file)
+      (call-etags-update tags-file)
+      )))
 
 ;; (add-hook 'after-save-hook 'ctags-update)
 ;; (add-hook 'python-mode-hook 
