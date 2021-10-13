@@ -7,6 +7,8 @@
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
 
+(setq tags-revert-without-query 1)
+
 ;;; TAGS file update after save start
 (defun find-file-upwards (file-to-find)
   "Recursively searches each parent directory starting from the default-directory.
@@ -31,12 +33,13 @@
   (call-process "/bin/bash"
                 nil nil nil
                 "-c"
-                (concat "find . -name '*.c*' -print -or -name '*.h'"
-                        " -print -or -name '*.py'"
-                        " -print -or -name '*.el' -print"
+                (concat "find . -type f \\( -iname '*.c' -o -iname '*.h*'"
+                        " -o -iname '*.py' -o -iname '*.el'"
+                        " ! -iname '*vendor*' \\) -print"
                         " | "
-                        "/snap/emacs/current/usr/bin/ctags -o "
+                        "/snap/emacs/current/usr/bin/etags -o "
                         tags-file " -")))
+
 
 (defun etags-tag-create ()
   "Create TAGS file in the current directory using emacs built-in ctags."
@@ -50,7 +53,7 @@
   (call-process "/bin/bash"
                 nil nil nil
                 "-c"
-                (concat "/snap/emacs/current/usr/bin/ctags -a -o "
+                (concat "/snap/emacs/current/usr/bin/etags -a -o "
                         tags-file " " default-directory "*.*")))
 
 (defun etags-update ()
@@ -60,8 +63,8 @@
   (let ((tags-file (expand-file-name (find-file-upwards "TAGS"))))
     (when tags-file
       (setq tags-file (concat tags-file "TAGS"))
-      ;; (call-ctags-universal tags-file)
-      (call-etags-update tags-file)
+      (call-ctags-universal tags-file)
+      ;; (call-etags-update tags-file)
       )))
 
 ;; (add-hook 'after-save-hook 'ctags-update)
