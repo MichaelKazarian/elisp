@@ -63,8 +63,8 @@
   (let ((tags-file (expand-file-name (find-file-upwards "TAGS"))))
     (when tags-file
       (setq tags-file (concat tags-file "TAGS"))
-      (call-ctags-universal tags-file)
-      ;; (call-etags-update tags-file)
+      ;; (call-ctags-universal tags-file)
+      (call-etags-update tags-file)
       )))
 
 ;; (add-hook 'after-save-hook 'ctags-update)
