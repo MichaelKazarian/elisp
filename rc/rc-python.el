@@ -5,6 +5,7 @@
 ;; Status: not intended to be distributed yet
 
 ;;; ELPY
+(setenv "WORKON_HOME" "~/.emacs.d/elpy")
 (elpy-enable)
 ;(elpy-use-ipython)
 
