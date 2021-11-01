@@ -5,9 +5,14 @@
 ;; Status: not intended to be distributed yet
 
 ;;; ELPY
-(setenv "WORKON_HOME" "~/.emacs.d/elpy")
+(setenv "WORKON_HOME" (concat (getenv "HOME") "/.emacs.d/elpy/"))
+(setq elpy-rpc-virtualenv-path "~/.emacs.d/elpy/"
+      elpy-rpc-python-command "python3"
+      python-shell-interpreter "python3"
+      python-shell-interpreter-args "-i"
+      python-indent-indent-offset 4)
+
 (elpy-enable)
-;(elpy-use-ipython)
 
 ;; use flycheck not flymake with elpy
 (when (require 'flycheck nil t)
@@ -26,20 +31,10 @@
             (setq outline-regexp "def\\|class ")
             (setq tab-width 4)
             (local-set-key [f8] 'flycheck-mode)
+            (git-gutter-mode)
             ))
 
-(setq safe-local-variable-values
-   (quote
-    ((python-shell-interpreter . "python3")
-     (elpy-rpc-virtualenv-path . "~/.virtualenvs/env3")
-     (python-indent-indent-offset . 4)
-     (python-shell-interpreter-args . "-i")
-     (python-shell-interpreter . "python2")
-     (elpy-rpc-virtualenv-path . "~/.virtualenvs/env2")
-     (eval lambda nil
-           (git-gutter-mode)))))
-
-;; elpy with .dir-locals.el
+;; elpy settings for .dir-locals.el
 ;; apt install python-virtualenv
 ;; python3 -m venv env3
 ;; source env3/bin/activate
