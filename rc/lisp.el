@@ -19,6 +19,11 @@
   ;; (local-set-key (kbd "S-<f7>") 'highlight-symbol-prev-in-defun))
 (add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
 
+
+(defun my-emacs-lisp-mode-hook ()
+  (local-set-key (kbd "C-c C-d") 'helpful-at-point))
+
+(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
 ;; (add-hook 'emacs-lisp-mode-hook 'highlight-symbol-mode)
 ;; (add-hook 'emacs-lisp-mode-hook 'highlight-symbol-nav-mode)
 
