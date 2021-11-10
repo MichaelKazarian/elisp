@@ -6,7 +6,7 @@
 
 ;;; ELPY
 (setenv "WORKON_HOME" (concat (getenv "HOME") "/.emacs.d/elpy/"))
-(setq elpy-rpc-virtualenv-path "~/.emacs.d/elpy/"
+(setq elpy-rpc-virtualenv-path "~/.emacs.d/elpy/rpc-venv/"
       elpy-rpc-python-command "python3"
       python-shell-interpreter "python3"
       python-shell-interpreter-args "-i"
