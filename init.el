@@ -10,8 +10,8 @@
 
 ;; Some useful packages:
 ;; color-theme-sanityinc-solarized doom-themes nova-theme
-;; imenu-list map e2wm
-;; olivetti
+;; imenu-list map e2wm olivetti popper
+;; elpy
 
 ;; keep init.el clean. Write to custom.el
 (setq custom-file (concat user-emacs-directory "/custom.el"))
@@ -52,6 +52,7 @@
 (load "~/elisp/rc/kbd.el")
 (load "~/elisp/rc/rc-company.el")
 (load "~/elisp/rc/google.el")
+(load "~/elisp/rc/rc-popper.el")
 ;; (load "~/elisp/rc/rc-nov.el")
 ;; (load "~/elisp/rc/rc-regex.el")
 
