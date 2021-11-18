@@ -10,6 +10,11 @@
 (setq tags-revert-without-query 1)
 
 ;;; TAGS file update after save start
+(defun get-etags-command ()
+  (let ((snap-etags "/snap/emacs/current/usr/bin/etags"))
+    (if (file-exists-p snap-etags) snap-etags
+      "/usr/bin/etags.emacs")))
+
 (defun find-file-upwards (file-to-find)
   "Recursively searches each parent directory starting from the default-directory.
  Returns the path to it or nil if not found."
@@ -37,7 +42,7 @@
                         " -o -iname '*.py' -o -iname '*.el'"
                         " ! -iname '*vendor*' \\) -print"
                         " | "
-                        "/snap/emacs/current/usr/bin/etags -o "
+                        (get-etags-command) " -o "
                         tags-file " -")))
 
 
@@ -53,7 +58,7 @@
   (call-process "/bin/bash"
                 nil nil nil
                 "-c"
-                (concat "/snap/emacs/current/usr/bin/etags -a -o "
+                (concat (get-etags-command) " -a -o "
                         tags-file " " default-directory "*.*")))
 
 (defun etags-update ()
@@ -65,6 +70,7 @@
       (setq tags-file (concat tags-file "TAGS"))
       ;; (call-ctags-universal tags-file)
       (call-etags-update tags-file)
+      (message (get-etags-command))
       )))
 
 ;; (add-hook 'after-save-hook 'ctags-update)
