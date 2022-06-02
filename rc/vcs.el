@@ -6,7 +6,7 @@
 ;; Keywords: ahg
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
-(require 'ahg)
+;; (require 'ahg)
 
 
 (global-set-key (kbd "C-x g") 'magit-status)
