@@ -51,8 +51,4 @@
 (load "~/elisp/rc/savehistory")
 (load "~/elisp/rc/kbd.el")
 (load "~/elisp/rc/rc-company.el")
-(load "~/elisp/rc/google.el")
-(load "~/elisp/rc/rc-popper.el")
-;; (load "~/elisp/rc/rc-nov.el")
-;; (load "~/elisp/rc/rc-regex.el")
 
