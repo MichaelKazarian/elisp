@@ -44,9 +44,9 @@
 
 ;; Color theme
 (setq host (system-name))
-(cond ((equal host "asm-3") (load-theme 'manoj-dark t))
-      ((equal host "Mac-Admin.local") (load-theme 'manoj-dark t))
-      ((equal host "MacBook-Pro-Admin.local") (load-theme 'manoj-dark t))
+(cond ((equal host "asm-3") (load-theme 'kaolin-breeze t))
+      ((equal host "Mac-Admin.local") (load-theme 'kaolin-breeze t))
+      ((equal host "MacBook-Pro-Admin.local") (load-theme 'kaolin-breeze t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
 ;; (load-theme 'monokai t)
