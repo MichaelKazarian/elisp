@@ -11,6 +11,7 @@
   (setq tab-width 2
         indent-tabs-mode nil)
   (abbrev-mode 1)
+  (set 'ecb-layout-name "left15")
   (electric-pair-mode)
   (outline-minor-mode 1)
   (display-line-numbers-mode 1)
