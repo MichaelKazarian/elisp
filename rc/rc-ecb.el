@@ -41,7 +41,7 @@
  '(ecb-directories-menu-user-extension-function nil)
  '(ecb-gzip-setup (quote cons))
  '(ecb-history-menu-user-extension-function nil)
- '(ecb-layout-name "left15")
+ '(ecb-layout-name "left14")
  '(ecb-methods-menu-user-extension-function nil)
  '(ecb-options-version "2.4")
  '(ecb-prescan-directories-for-emptyness nil)
