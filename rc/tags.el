@@ -38,13 +38,15 @@
   (call-process "/bin/bash"
                 nil nil nil
                 "-c"
-                (concat "find . -type f \\( -iname '*.c' -o -iname '*.h*'"
-                        " -o -iname '*.py' -o -iname '*.el'"
+                (concat "find . "
+                        " -type f \\( -iname '*.c' -o -iname '*.h*'"
+                        " -o -iname '*.cpp'"
+                        " -o -iname '*.py'"
+                        " -o -iname '*.el'"
                         " ! -iname '*vendor*' \\) -print"
                         " | "
-                        (get-etags-command) " -o "
-                        tags-file " -")))
-
+                        (get-etags-command)
+                        " -o " tags-file " -")))
 
 (defun etags-tag-create ()
   "Create TAGS file in the current directory using emacs built-in ctags."
@@ -57,7 +59,6 @@
   "Calls emacs ctags to update tags-file"
   (call-process "/bin/bash"
                 nil nil nil
-                "-c"
                 (concat (get-etags-command) " -a -o "
                         tags-file " " default-directory "*.*")))
 
