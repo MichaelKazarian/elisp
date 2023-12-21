@@ -33,12 +33,15 @@
                 " --exclude='.svn'"
                 (file-name-directory tags-file)))
 
-(defun call-etags-create (tags-file)
+(defun call-etags-create (tags-file dirs)
   "Calls emacs built-in ctags to create TAGS file"
+  (if (equal dirs nil)
+    (setq dirs default-directory))
   (call-process "/bin/bash"
                 nil nil nil
                 "-c"
-                (concat "find . "
+                (concat "find "
+                        dirs
                         " -type f \\( -iname '*.c' -o -iname '*.h*'"
                         " -o -iname '*.cpp'"
                         " -o -iname '*.py'"
@@ -48,12 +51,12 @@
                         (get-etags-command)
                         " -o " tags-file " -")))
 
-(defun etags-tag-create ()
+(defun etags-tag-create (&optional dirs)
   "Create TAGS file in the current directory using emacs built-in ctags."
   (interactive)
   (let ((tags-file (expand-file-name "TAGS")))
     ;; (call-etags-universal tags-file)
-    (call-etags-create tags-file)))
+    (call-etags-create tags-file dirs)))
 
 (defun call-etags-update (tags-file)
   "Calls emacs ctags to update tags-file"

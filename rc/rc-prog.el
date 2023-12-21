@@ -7,6 +7,14 @@
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
 
+(setq tags-candidate '("."))
+
+(defun find-dirs-str ()
+  "Returns tags-candidate prepared to find command"
+  (let (value)
+    (dolist (element tags-candidate value)
+      (setq value (concat element " " value)))))
+
 (defun my-prog-mode-hook ()
   (setq tab-width 2
         indent-tabs-mode nil)
