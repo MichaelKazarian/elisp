@@ -7,10 +7,12 @@
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
 
+(setq clang-tags-candidate '("."))
+
 (defun clang-dirs ()
   "Returns tags-candidate as clang -I arguments"
   (let (value)
-    (dolist (element tags-candidate value)
+    (dolist (element clang-tags-candidate value)
       (setq value (cons (concat "-I" element) value)))))
 
 ;;; rc-clang.el ends here
