@@ -9,10 +9,19 @@
 
 (setq clang-tags-candidate '("."))
 
-(defun clang-dirs ()
+(defun get-h-dirs (dest)
+  "Returns directories list contains *.h files starts from dest"
+  (let ((cmd (concat "find "
+                     dest
+                     " -type f -name '*.h' -printf '%h\n' | uniq")))
+    (delete '"" (split-string (shell-command-to-string cmd) "\n"))))
+
+(defun clang-src-dirs ()
   "Returns tags-candidate as clang -I arguments"
   (let (value)
     (dolist (element clang-tags-candidate value)
-      (setq value (cons (concat "-I" element) value)))))
+      (dolist (dir (get-h-dirs element))
+        (setq value (cons (concat "-I" (expand-file-name dir)) value)))
+      )))
 
 ;;; rc-clang.el ends here
