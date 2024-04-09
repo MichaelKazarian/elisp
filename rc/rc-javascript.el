@@ -6,6 +6,7 @@
 ;; Keywords: 
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
+;; See https://ternjs.net/ and https://wavesurfer.xyz/blog/emacs-javascript
 
 
 (require 'js2-mode)
