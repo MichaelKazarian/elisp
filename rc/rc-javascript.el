@@ -11,7 +11,9 @@
 
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js-mode-hook (lambda () (tern-mode t)))
+(add-hook 'js2-mode-hook (lambda ()
+                          (tern-mode t)
+                          (hideshowvis-enable)))
 (eval-after-load 'tern
   '(progn
      (autoload 'company-tern "company-tern.el" nil t)
