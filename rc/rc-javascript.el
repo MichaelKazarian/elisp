@@ -10,10 +10,14 @@
 
 
 (require 'js2-mode)
+;; (add-hook 'prog-mode-hook 'js2-mode-hook)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook (lambda ()
-                          (tern-mode t)
-                          (hideshowvis-enable)))
+                           (tern-mode t)
+                           (hideshowvis-enable)))
+
+(custom-set-variables '(js-indent-level 2))
+
 (eval-after-load 'tern
   '(progn
      (autoload 'company-tern "company-tern.el" nil t)
