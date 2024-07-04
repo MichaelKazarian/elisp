@@ -44,7 +44,7 @@
 
 ;; Color theme
 (setq host (system-name))
-(cond ((equal host (or "asm-3" "raspberrypi")) (load-theme 'kaolin-mono-light t))
+(cond ((member host '("asm-3" "rpi5-mk")) (load-theme 'kaolin-mono-light t))
       ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
@@ -69,6 +69,5 @@
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 (setq unibyte-display-via-language-environment t)
-
 
 ;;; emacs-rc-screen.el ends here
