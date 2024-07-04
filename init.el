@@ -35,7 +35,7 @@
 (load "~/elisp/rc/tags.el")
 (load "~/elisp/rc/rc-clang.el")
 (load "~/elisp/rc/rc-cedet.el")
-(load "~/elisp/rc/rc-ecb.el")
+;; (load "~/elisp/rc/rc-ecb.el")
 (load "~/elisp/rc/rc-ispell.el")
 (load "~/elisp/rc/rc-eshell.el")
 (load "~/elisp/rc/rc-nxml.el")
