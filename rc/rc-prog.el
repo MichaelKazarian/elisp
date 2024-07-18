@@ -67,7 +67,7 @@
 (setq whitespace-silent t)
 (setq whitespace-modes (quote (awk-mode)))
 (setq whitespace-style '(spaces tabs newline space-mark tab-mark face))
-(set-face-attribute 'whitespace-space nil :background nil :foreground "gray70")
+(set-face-attribute 'whitespace-space nil :background 'unspecified :foreground "gray70")
 
 (setq whitespace-display-mappings
   ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
