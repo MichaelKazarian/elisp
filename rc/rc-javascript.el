@@ -8,13 +8,10 @@
 ;; Status: not intended to be distributed yet
 ;; See https://ternjs.net/ and https://wavesurfer.xyz/blog/emacs-javascript
 
-
-(require 'js2-mode)
-;; (add-hook 'prog-mode-hook 'js2-mode-hook)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js2-mode-hook (lambda ()
-                           (tern-mode t)
-                           (hideshowvis-enable)))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-mode))
+(add-hook 'js-mode-hook (lambda ()
+                         (tern-mode t)
+                         (hideshowvis-enable)))
 
 (custom-set-variables '(js-indent-level 2))
 
