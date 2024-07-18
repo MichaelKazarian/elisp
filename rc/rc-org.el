@@ -23,7 +23,6 @@
   ;; (auto-fill-mode)
   (toggle-truncate-lines -1)
   (font-lock-mode)
-  ;; (linum-mode 1)
   (display-line-numbers-mode)
   (hl-line-mode 1)
   ;; (setq org-hide-emphasis-markers t) ;Hiding markup elements in org-mode
@@ -31,5 +30,5 @@
 
 (add-hook 'org-mode-hook 'my-org-mode-hook)
 
-(load-library "lesson-mode")
+;;(load-library "lesson-mode")
 ;;; emacs-rc-org.el ends here
