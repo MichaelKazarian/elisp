@@ -31,12 +31,13 @@
 (load "~/elisp/rc/vcs.el")
 (load "~/elisp/rc/rc-prog.el")
 ;; programming tools & languages
+(load "~/elisp/rc/rc-company.el")
 (load "~/elisp/rc/lisp.el")
 (load "~/elisp/rc/tags.el")
 (load "~/elisp/rc/rc-clang.el")
-(load "~/elisp/rc/rc-cedet.el")
+;; (load "~/elisp/rc/rc-cedet.el")
 ;; (load "~/elisp/rc/rc-ecb.el")
-(load "~/elisp/rc/rc-ispell.el")
+;; (load "~/elisp/rc/rc-ispell.el")
 (load "~/elisp/rc/rc-eshell.el")
 (load "~/elisp/rc/rc-nxml.el")
 (load "~/elisp/rc/rc-json.el")
@@ -47,10 +48,8 @@
 (load "~/elisp/rc/rc-make.el")
 (load "~/elisp/rc/rc-javascript.el")
 
-;; others tools
+;; ;; others tools
 (load "~/elisp/rc/auto-insert.el")
 (load "~/elisp/rc/backup.el")
 (load "~/elisp/rc/savehistory")
 (load "~/elisp/rc/kbd.el")
-(load "~/elisp/rc/rc-company.el")
-
