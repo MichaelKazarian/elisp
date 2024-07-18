@@ -17,7 +17,9 @@
 ;; use flycheck not flymake with elpy
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
+  (add-hook 'elpy-mode-hook
+            (lambda ()
+              (flycheck-mode -1))))
 
 ;; enable autopep8 formatting on save
 ;; (require 'py-autopep8)
