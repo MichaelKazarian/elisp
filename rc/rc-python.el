@@ -34,6 +34,8 @@
             (setq tab-width 4)
             (local-set-key [f8] 'flycheck-mode)
             (git-gutter-mode)
+            (setq elpy-rpc-virtualenv-path "~/.emacs.d/elpy/rpc-venv")
+            (pyvenv-workon "rpc-venv")
             ))
 
 ;; elpy settings for .dir-locals.el

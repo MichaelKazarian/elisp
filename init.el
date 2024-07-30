@@ -48,7 +48,7 @@
 (load "~/elisp/rc/rc-make.el")
 (load "~/elisp/rc/rc-javascript.el")
 
-;; ;; others tools
+;; others tools
 (load "~/elisp/rc/auto-insert.el")
 (load "~/elisp/rc/backup.el")
 (load "~/elisp/rc/savehistory")
