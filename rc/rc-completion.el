@@ -35,6 +35,7 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (global-set-key (kbd "\e\em") 'company-complete)
 (company-quickhelp-mode)
-(setq company-quickhelp-delay nil)
+(setq company-quickhelp-delay 3)
+(setq company-idle-delay nil)
 
 ;;; rc-completion.el ends here
