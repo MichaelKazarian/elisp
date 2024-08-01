@@ -44,8 +44,8 @@
 
 ;; Color theme
 (setq host (system-name))
-(cond ((member host '("asm-3" "rpi5-mk")) (load-theme 'kaolin-mono-light t))
-      ((equal host "rpzero2") (load-theme 'kaolin-eclipse t))
+(cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
+      ((member host '("asm-3" "rpi5-mk" "rpzero2")) (load-theme 'kaolin-mono-light t))
       ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
       (t (load-theme 'sunny-day t)))
 ;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
