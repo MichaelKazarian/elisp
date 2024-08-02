@@ -48,25 +48,17 @@
       ((member host '("asm-3" "rpi5-mk" "rpzero2")) (load-theme 'kaolin-mono-light t))
       ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
       (t (load-theme 'sunny-day t)))
-;; (add-to-list 'custom-theme-load-path "~/elisp/rc/my-themes")
-;; (load-theme 'monokai t)
-;; (load-theme 'mccarthy t)
-;; (load-theme 'Deviant t) ;;https://github.com/Corsair/emacs-deviant-theme/blob/master/Deviant-theme.el
 
 ;;Font
 (require 'font-lock)
-
 (cond ((equal system-type 'gnu/linux) (setq ttf-font "Inconsolata LGC"))
       ((equal system-type 'darwin) (setq ttf-font "Inconsolata LGC"))
       (t (setq ttf-font "Consolas")))
-
 (cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
       ((equal system-type 'darwin) (setq ttf-font-s 180))
       (t (setq ttf-font-s 120)))
-
 (set-face-attribute 'default nil
                     :family ttf-font :height ttf-font-s :weight 'normal)
-
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 (setq unibyte-display-via-language-environment t)
