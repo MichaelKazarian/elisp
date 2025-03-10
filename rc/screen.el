@@ -63,4 +63,39 @@
 (setq font-lock-maximum-decoration t)
 (setq unibyte-display-via-language-environment t)
 
+;; Add behaviour like ECB compilation window
+(require 'popwin)
+(popwin-mode 1)
+
+(setq popwin:special-display-config
+      '(("*Help*" :position right :width 40 :stick t)
+        ("*Messages*" :position bottom :height 10 :stick t)
+        ("*compilation*" :position bottom :height 15 :stick t :regexp t)
+        ("*eshell*" :position bottom :height 15 :stick t)
+        ("^\\*helpful.*" :position right :width 0.4 :stick t :regexp t)
+        ))
+
+(defvar my-window-max-height 25
+  "Висота вікна, коли воно активне.")
+
+(defvar my-window-min-height 10
+  "Мінімальна висота вікна, коли воно не активне.")
+
+(defun my-adjust-popwin-windows ()
+  "Розширює або зменшує вікна popwin, які розташовані внизу."
+  (dolist (win (window-list))
+    (let ((buf (window-buffer win)))
+      (when (and buf
+                 (assoc (buffer-name buf) popwin:special-display-config))
+        (let ((config (cdr (assoc (buffer-name buf) popwin:special-display-config))))
+          (when (eq (plist-get config :position) 'bottom)
+            (if (eq (selected-window) win)
+                (with-selected-window win
+                  (enlarge-window (- my-window-max-height (window-height))))
+              (with-selected-window win
+                (shrink-window (- (window-height) my-window-min-height))))))))))
+
+(add-hook 'window-selection-change-functions
+          (lambda (_) (my-adjust-popwin-windows)))
+
 ;;; emacs-rc-screen.el ends here
