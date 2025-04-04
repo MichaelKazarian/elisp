@@ -45,13 +45,13 @@
 ;; Color theme
 (setq host (system-name))
 (cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
-      ((member host '("asm-3" "rpi5-mk" "rpzero2")) (load-theme 'kaolin-mono-light t))
+      ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm")) (load-theme 'kaolin-mono-light t))
       ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
       (t (load-theme 'sunny-day t)))
 
 ;;Font
 (require 'font-lock)
-(cond ((equal system-type 'gnu/linux) (setq ttf-font "Inconsolata LGC"))
+(cond ((equal system-type 'gnu/linux) (setq ttf-font "FiraCode"))
       ((equal system-type 'darwin) (setq ttf-font "Inconsolata LGC"))
       (t (setq ttf-font "Consolas")))
 (cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
