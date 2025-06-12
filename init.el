@@ -53,3 +53,4 @@
 (load "~/elisp/rc/backup.el")
 (load "~/elisp/rc/savehistory")
 (load "~/elisp/rc/kbd.el")
+(load "~/elisp/rc/rc-dired.el")
