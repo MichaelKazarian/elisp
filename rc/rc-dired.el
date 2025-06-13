@@ -65,35 +65,21 @@
 (defun dired-preview-display-buffer (buf)
   "Display the preview buffer BUF in a right-side window."
   (let ((buffer-list-update-hook nil)
+        (window-configuration-change-hook nil)
         (display-buffer-alist nil))
-    (pop-to-buffer buf '((display-buffer-in-side-window)
-                         (side . right)
+    (let ((window (display-buffer-in-side-window
+                   buf '((side . right)
                          (window-width . 0.5)
                          (slot . 1)
                          (window-parameters (no-delete-other-windows . t)
-                                            (no-other-window . t)))
-                   t) ;; Avoid focus to new window
-    ;; Діагностика, якщо потрібна
-    ;; (let ((window (get-buffer-window buf t)))
-    ;;   (message "Window created: %s, Buffer: %s, Visible: %s"
-    ;;            window (buffer-name buf) (window-live-p window)))
-    ))
-
-;; (defun dired-preview-display-buffer (buf)
-;;   "Display the preview buffer BUF in a right-side window."
-;;   (let ((buffer-list-update-hook nil)
-;;         (display-buffer-alist nil))
-;;     (let ((window (display-buffer-in-side-window
-;;                    buf '((side . right)
-;;                          (window-width . 0.5)
-;;                          (slot . 1)
-;;                          ;; (window-parameters (no-delete-other-windows . t)
-;;                          ;;                    (no-other-window . t))
-;;                          ))))
-;;       ;; (message "Window created: %s, Buffer: %s, Visible: %s"
-;;       ;;          window (buffer-name buf) (window-live-p window))
-;;       ;; (select-window window) ;; select new buffer
-;;       )))
+                                            (dedicated . t)
+                                            (dired-preview-just-created . t))))))
+      ;; (when window
+      ;;   (set-window-dedicated-p window t)
+      ;;   (message "Window created: %s, Buffer: %s, Visible: %s, Just-created: %s"
+      ;;            window (buffer-name buf) (window-live-p window)
+      ;;            (window-parameter window 'dired-preview-just-created)))
+      window)))
 
 (defun dired-preview-setup-keybindings ()
   "Set up keybindings for the preview buffer."
@@ -126,22 +112,24 @@
 (defun dired-preview-cleanup ()
   "Hide preview buffer and close its window if possible."
   (run-with-idle-timer
-   0.1 nil
+   0.3 nil ; Збільшена затримка
    (lambda ()
      (let ((buf (dired-preview--buffer))
            (win (dired-preview--window)))
        (when (and buf (buffer-live-p buf)
-                  (not (eq (current-buffer) buf))) ; якщо ми не у preview
-         (when (and win (window-live-p win))
-           (message "Cleanup: Closing window %s for buffer %s" win buf)
-           (with-selected-window win
-             (quit-window nil win))))))))
+                  (not (eq (current-buffer) buf))
+                  win (window-live-p win)
+                  (not (window-parameter win 'dired-preview-just-created)))
+         ;; (message "Cleanup: Closing window %s for buffer %s, Just-created: %s"
+         ;;          win buf (window-parameter win 'dired-preview-just-created))
+         (with-selected-window win
+           (quit-window nil win)))))))
 
 (defun dired-preview-quit ()
   "Close preview and return focus to Dired window."
   (interactive)
   (let ((win (selected-window)))
-    (message "Quitting window: %s, Visible: %s" win (window-live-p win))
+    ;; (message "Quitting window: %s, Visible: %s" win (window-live-p win))
     (quit-window t win)
     (when (and previewed-dired-window (windowp previewed-dired-window) (window-live-p previewed-dired-window))
       (select-window previewed-dired-window))))
