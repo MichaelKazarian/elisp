@@ -179,7 +179,7 @@ focus the window, but this will override `dired-preview-auto-focus' and
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "TAB") #'dired-preview-file)
   (define-key dired-mode-map (kbd "q") #'dired-preview-quit-dired)
-  (define-key dired-mode-map (kbd "q") #'dired-preview-quit-dired))
+  (add-hook 'kill-buffer-hook #'dired-preview-close-on-dired-exit))
 
 (add-hook 'buffer-list-update-hook #'dired-preview-cleanup)
 
