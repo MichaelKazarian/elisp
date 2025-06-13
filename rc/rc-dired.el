@@ -159,8 +159,27 @@ focus the window, but this will override `dired-preview-auto-focus' and
     (when (and previewed-dired-window (windowp previewed-dired-window) (window-live-p previewed-dired-window))
       (select-window previewed-dired-window))))
 
+(defun dired-preview-close-on-dired-exit ()
+  "Close the preview window when exiting a Dired buffer."
+  (when (eq major-mode 'dired-mode)
+    (let ((buf (dired-preview--buffer))
+          (win (dired-preview--window)))
+      (when (and buf (buffer-live-p buf) win (window-live-p win))
+        (message "Closing preview window %s for buffer %s on Dired exit"
+                 win buf)
+        (with-selected-window win
+          (quit-window nil win))))))
+
+(defun dired-preview-quit-dired ()
+  "Quit Dired and close the preview window."
+  (interactive)
+  (dired-preview-close-on-dired-exit)
+  (quit-window))
+
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "TAB") #'dired-preview-file))
+  (define-key dired-mode-map (kbd "TAB") #'dired-preview-file)
+  (define-key dired-mode-map (kbd "q") #'dired-preview-quit-dired)
+  (define-key dired-mode-map (kbd "q") #'dired-preview-quit-dired))
 
 (add-hook 'buffer-list-update-hook #'dired-preview-cleanup)
 
