@@ -77,7 +77,10 @@ Valid values are `right', `left', `top', or `bottom'."
     (company-mode -1)))
 
 (defun dired-preview-display-buffer (buf)
-  "Display the preview buffer BUF in a side window."
+  "Display the preview buffer BUF in a side window.
+Note: `display-buffer' can be replaced with `pop-to-buffer' to automatically
+focus the window, but this will override `dired-preview-auto-focus' and
+`save-selected-window' behavior."
   (let ((buffer-list-update-hook nil)
         (window-configuration-change-hook nil)
         (display-buffer-alist nil))
