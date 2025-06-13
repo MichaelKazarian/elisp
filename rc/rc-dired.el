@@ -12,6 +12,15 @@
   :type 'boolean
   :group 'dired-preview)
 
+(defcustom dired-preview-window-side 'right
+  "Side where the preview window is displayed.
+Valid values are `right', `left', `top', or `bottom'."
+  :type '(choice (const right)
+                 (const left)
+                 (const top)
+                 (const bottom))
+  :group 'dired-preview)
+
 (defvar dired-preview-buffer-name "*dired-preview*"
   "Name of the dired preview buffer.")
 
@@ -68,26 +77,31 @@
     (company-mode -1)))
 
 (defun dired-preview-display-buffer (buf)
-  "Display the preview buffer BUF in a right-side window."
+  "Display the preview buffer BUF in a side window."
   (let ((buffer-list-update-hook nil)
         (window-configuration-change-hook nil)
         (display-buffer-alist nil))
-    (let ((window (display-buffer-in-side-window
-                   buf '((side . right)
-                         (window-width . 0.5)
-                         (slot . 1)
-                         (window-parameters (no-delete-other-windows . t)
-                                            (dedicated . t)
-                                            (dired-preview-just-created . t))))))
-      (when window
-        (set-window-dedicated-p window t)
-        (when dired-preview-auto-focus
-          (select-window window))
-        ;;   (message "Window created: %s, Buffer: %s, Visible: %s, Just-created: %s"
-        ;;            window (buffer-name buf) (window-live-p window)
-        ;;            (window-parameter window 'dired-preview-just-created)))
-        )
-      window)))
+    (save-selected-window
+      (let ((window (display-buffer
+                     buf
+                     `((display-buffer-in-side-window)
+                       (side . ,dired-preview-window-side)
+                       (window-width . 0.5)
+                       (slot . 1)
+                       (window-parameters (no-delete-other-windows . t)
+                                          (dedicated . t)
+                                          (dired-preview-just-created . t))))))
+        (when window
+          (set-window-dedicated-p window t)
+          (when dired-preview-auto-focus
+            (select-window window))
+          ;; (message "Window created: %s, Buffer: %s, Visible: %s, Just-created: %s, Auto-focus: %s, Side: %s"
+          ;;          window (buffer-name buf) (window-live-p window)
+          ;;          (window-parameter window 'dired-preview-just-created)
+          ;;          dired-preview-auto-focus
+          ;;          dired-preview-window-side)
+          )
+        window))))
 
 (defun dired-preview-setup-keybindings ()
   "Set up keybindings for the preview buffer."
