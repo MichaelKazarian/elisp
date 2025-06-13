@@ -3,9 +3,43 @@
 ;; Copyright (C) Michael Kazarian
 ;;
 ;; Author: Michael Kazarian <michael.kazarian@gmail.com>
-;; Keywords: 
-;; Requirements: 
+;; Keywords: dired, preview
+;; Version: 0.1
+;; Package-Requires: ((emacs "26.1"))
+;; URL: https://github.com/michael-kazarian/rc-dired
 ;; Status: not intended to be distributed yet
+
+;;; Commentary:
+;; This package provides a minor mode for previewing files in Dired.
+;; Use `dired-preview-mode' to toggle the preview functionality.
+;;
+;; Installation:
+;; 1. Place `dired-preview.el' in your Emacs load path.
+;; 2. Add to your `.emacs' or `init.el':
+;;    (require 'dired-preview)
+;;    (dired-preview-mode 1) ; Enable the mode globally
+;;
+;; Usage:
+;; - With `dired-preview-mode' enabled, open a Dired buffer.
+;; - Press `TAB' (or your custom key, see `dired-preview-file-key') to preview
+;;   the file at point in a side window.
+;; - In the preview window, press `q' (or `dired-preview-quit-key') to close the
+;;   preview, or `e' (or `dired-preview-edit-key') to edit the file.
+;; - Press `q' (or `dired-preview-quit-dired-key') in Dired to quit Dired and
+;;   close the preview.
+;; - The preview window automatically closes when exiting Dired via `q' or
+;;   `C-x k'.
+;;
+;; Customization:
+;; - `dired-preview-auto-focus': Set to t to focus the preview window after
+;;   opening (default: nil).
+;; - `dired-preview-window-side': Choose the side for the preview window
+;;   (`right', `left', `top', `bottom'; default: `right').
+;; - `dired-preview-file-key', `dired-preview-quit-dired-key',
+;;   `dired-preview-quit-key', `dired-preview-edit-key': Customize keybindings.
+;; Use `M-x customize-group RET dired-preview RET' to adjust settings.
+
+;;; Code:
 
 (defcustom dired-preview-auto-focus nil
   "If non-nil, automatically focus the preview window after opening it."
@@ -207,4 +241,28 @@ focus the window, but this will override `dired-preview-auto-focus' and
 
 (add-hook 'buffer-list-update-hook #'dired-preview-cleanup)
 
+(define-minor-mode dired-preview-mode
+  "Toggle Dired preview mode.
+When enabled, provides functionality to preview files in a side window."
+  :global t
+  :group 'dired-preview
+  :lighter " Dired-Preview"
+  (if dired-preview-mode
+      (progn
+        (when dired-preview-file-key
+          (define-key dired-mode-map dired-preview-file-key #'dired-preview-file))
+        (when dired-preview-quit-dired-key
+          (define-key dired-mode-map dired-preview-quit-dired-key #'dired-preview-quit-dired))
+        (add-hook 'kill-buffer-hook #'dired-preview-close-on-dired-exit)
+        (add-hook 'buffer-list-update-hook #'dired-preview-cleanup))
+    (progn
+      (when dired-preview-file-key
+        (define-key dired-mode-map dired-preview-file-key nil))
+      (when dired-preview-quit-dired-key
+        (define-key dired-mode-map dired-preview-quit-dired-key nil))
+      (remove-hook 'kill-buffer-hook #'dired-preview-close-on-dired-exit)
+      (remove-hook 'buffer-list-update-hook #'dired-preview-cleanup)
+      (dired-preview-close-previous))))
+
+(provide 'rc-dired)
 ;;; rc-dired.el ends here
