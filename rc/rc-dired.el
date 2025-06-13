@@ -7,6 +7,11 @@
 ;; Requirements: 
 ;; Status: not intended to be distributed yet
 
+(defcustom dired-preview-auto-focus nil
+  "If non-nil, automatically focus the preview window after opening it."
+  :type 'boolean
+  :group 'dired-preview)
+
 (defvar dired-preview-buffer-name "*dired-preview*"
   "Name of the dired preview buffer.")
 
@@ -74,11 +79,14 @@
                          (window-parameters (no-delete-other-windows . t)
                                             (dedicated . t)
                                             (dired-preview-just-created . t))))))
-      ;; (when window
-      ;;   (set-window-dedicated-p window t)
-      ;;   (message "Window created: %s, Buffer: %s, Visible: %s, Just-created: %s"
-      ;;            window (buffer-name buf) (window-live-p window)
-      ;;            (window-parameter window 'dired-preview-just-created)))
+      (when window
+        (set-window-dedicated-p window t)
+        (when dired-preview-auto-focus
+          (select-window window))
+        ;;   (message "Window created: %s, Buffer: %s, Visible: %s, Just-created: %s"
+        ;;            window (buffer-name buf) (window-live-p window)
+        ;;            (window-parameter window 'dired-preview-just-created)))
+        )
       window)))
 
 (defun dired-preview-setup-keybindings ()
