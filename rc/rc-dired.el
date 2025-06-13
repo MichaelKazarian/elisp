@@ -21,6 +21,26 @@ Valid values are `right', `left', `top', or `bottom'."
                  (const bottom))
   :group 'dired-preview)
 
+(defcustom dired-preview-file-key (kbd "TAB")
+  "Keybinding to open the file preview in Dired."
+  :type 'key-sequence
+  :group 'dired-preview)
+
+(defcustom dired-preview-quit-dired-key (kbd "q")
+  "Keybinding to quit Dired and close the preview."
+  :type 'key-sequence
+  :group 'dired-preview)
+
+(defcustom dired-preview-quit-key (kbd "q")
+  "Keybinding to close the preview window."
+  :type 'key-sequence
+  :group 'dired-preview)
+
+(defcustom dired-preview-edit-key (kbd "e")
+  "Keybinding to edit the previewed file."
+  :type 'key-sequence
+  :group 'dired-preview)
+
 (defvar dired-preview-buffer-name "*dired-preview*"
   "Name of the dired preview buffer.")
 
@@ -110,8 +130,10 @@ focus the window, but this will override `dired-preview-auto-focus' and
   "Set up keybindings for the preview buffer."
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map (current-local-map))
-    (define-key map (kbd "q") #'dired-preview-quit)
-    (define-key map (kbd "e") #'dired-preview-edit-file)
+    (when dired-preview-quit-key
+      (define-key map dired-preview-quit-key #'dired-preview-quit))
+    (when dired-preview-edit-key
+      (define-key map dired-preview-edit-key #'dired-preview-edit-file))
     (use-local-map map)))
 
 (defun dired-preview-file ()
@@ -177,8 +199,10 @@ focus the window, but this will override `dired-preview-auto-focus' and
   (quit-window))
 
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "TAB") #'dired-preview-file)
-  (define-key dired-mode-map (kbd "q") #'dired-preview-quit-dired)
+  (when dired-preview-file-key
+    (define-key dired-mode-map dired-preview-file-key #'dired-preview-file))
+  (when dired-preview-quit-dired-key
+    (define-key dired-mode-map dired-preview-quit-dired-key #'dired-preview-quit-dired))
   (add-hook 'kill-buffer-hook #'dired-preview-close-on-dired-exit))
 
 (add-hook 'buffer-list-update-hook #'dired-preview-cleanup)
