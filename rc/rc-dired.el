@@ -4,7 +4,7 @@
 ;;
 ;; Author: Michael Kazarian <michael.kazarian@gmail.com>
 
-(require 'dired-preview)
-(dired-preview-mode 1) ; Enable the mode globally
+(require 'dired-lister)
+(dired-lister-mode 1) ; Enable the mode globally
 
 ;;; rc-dired.el ends here
