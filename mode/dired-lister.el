@@ -50,6 +50,8 @@
 ;;   (`right', `left', `top', `bottom'; default: `right').
 ;; - `dired-lister-file-key', `dired-lister-quit-dired-key',
 ;;   `dired-lister-quit-key', `dired-lister-edit-key': Customize keybindings.
+;; - `dired-lister-disabled-modes', `dired-lister-disabled-hooks': Customize
+;;   modes and hooks to disable in the preview buffer.
 ;; Use `M-x customize-group RET dired-lister RET' to adjust settings.
 
 ;;; Code:
@@ -86,6 +88,18 @@ Valid values are `right', `left', `top', or `bottom'."
 (defcustom dired-lister-edit-key (kbd "e")
   "Keybinding to edit the previewed file."
   :type 'key-sequence
+  :group 'dired-lister)
+
+(defcustom dired-lister-disabled-modes
+  '(company-mode)
+  "List of major or minor modes to disable in the preview buffer."
+  :type '(repeat symbol)
+  :group 'dired-lister)
+
+(defcustom dired-lister-disabled-hooks
+  '(after-change-major-mode-hook)
+  "List of hooks to disable in the preview buffer."
+  :type '(repeat symbol)
   :group 'dired-lister)
 
 (defvar dired-lister-buffer-name "*dired-lister*"
@@ -143,6 +157,7 @@ When enabled, provides functionality to preview files in a side window."
         (condition-case err
             (set-auto-mode)
           (error (message "Error in set-auto-mode: %s" err))))
+      (dired-lister-disable-hooks-and-modes)
       (font-lock-mode 1)
       (font-lock-flush)
       (font-lock-ensure)
@@ -151,17 +166,26 @@ When enabled, provides functionality to preview files in a side window."
       (setq-local previewed-dired-window (get-mru-window nil t t)))))
 
 (defun dired-lister-disable-hooks-and-modes ()
-  "Disable specific hooks and modes for the preview buffer."
-  (let ((hooks-and-modes
-         '((org-mode-hook . nil)
-           (org-startup-folded . nil)
-           (c-mode-hook . nil)
-           (python-mode-hook . nil)
-           (after-change-major-mode-hook . nil))))
-    (dolist (hook-and-value hooks-and-modes)
-      (set (car hook-and-value) (cdr hook-and-value))))
-  (when (fboundp 'company-mode)
-    (company-mode -1)))
+  "Disable hooks and modes specified in `dired-lister-disabled-hooks` and `dired-lister-disabled-modes`.
+Also disables the hook associated with the current major-mode."
+  (let ((mode-hook (intern-soft (concat (symbol-name major-mode) "-hook"))))
+    ;; Disable hooks from the custom list
+    (dolist (hook dired-lister-disabled-hooks)
+      (when (boundp hook)
+        (set hook nil)
+        ;; (message "Disabled hook: %s" hook))
+      )
+    ;; Disable the major-mode specific hook
+    (when mode-hook
+      (set mode-hook nil)
+      ;; (message "Disabled major-mode hook: %s" mode-hook)
+      )
+    ;; Disable modes
+    (dolist (mode dired-lister-disabled-modes)
+      (when (and (fboundp mode) (functionp mode))
+        (funcall mode -1)
+        ;; (message "Disabled mode: %s" mode)
+        ))))
 
 (defun dired-lister-display-buffer (buf)
   "Display the preview buffer BUF in a side window."
@@ -202,8 +226,8 @@ When enabled, provides functionality to preview files in a side window."
     (when (file-regular-p file)
       (dired-lister-close-previous)
       (dired-lister-prepare-buffer file buf)
-      (with-current-buffer buf
-        (dired-lister-disable-hooks-and-modes))
+      ;; (with-current-buffer buf
+      ;;   (dired-lister-disable-hooks-and-modes))
       (dired-lister-display-buffer buf)
       (with-selected-window (get-buffer-window buf t)
         (dired-lister-setup-keybindings)))))
@@ -242,8 +266,8 @@ When enabled, provides functionality to preview files in a side window."
     (let ((buf (dired-lister--buffer))
           (win (dired-lister--window)))
       (when (and buf (buffer-live-p buf) win (window-live-p win))
-        (message "Closing preview window %s for buffer %s on Dired exit"
-                 win buf)
+        ;; (message "Closing preview window %s for buffer %s on Dired exit"
+        ;;          win buf)
         (with-selected-window win
           (quit-window nil win))))))
 
