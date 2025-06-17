@@ -7,6 +7,14 @@
 (require 'dired-lister)
 (dired-lister-mode 1) ; Enable the mode globally
 
+(defvar my-dired-keybindings
+  '(("C-c h" "Toggle hidden files")
+    ("C-c a" "Alphabetically")
+    ("C-c d" "Date (newest first)")
+    ("C-c r" "Date (oldest first)")
+    ("C-c s" "Show sort menu"))
+  "List of Dired keybindings as ((key) (description)), matching sort-options names.")
+
 ;; Базові налаштування Dired
 (setq dired-use-ls-dired t)
 (setq dired-listing-switches "-lh --group-directories-first")  ; Без -a за замовчуванням
