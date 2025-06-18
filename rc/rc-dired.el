@@ -16,22 +16,67 @@
   "List of Dired keybindings as ((key) (description)), matching sort-options names.")
 
 ;; Базові налаштування Dired
-(setq dired-use-ls-dired t)
-(setq dired-listing-switches "-lh --group-directories-first")  ; Без -a за замовчуванням
+(setq dired-listing-switches "-lh --group-directories-first")
 
 ;; Змінна для відстеження стану прихованих файлів
 (defvar my-dired-show-hidden nil
   "Whether to show hidden files in Dired (controls -a in ls switches).")
 
-;; Функція для перемикання відображення прихованих файлів
+(defun my-dired-insert-dot-dot ()
+  "Вставляє результат ls -ld .. у Dired, якщо приховані файли вимкнені."  
+  (when (and (not my-dired-show-hidden)
+             (eq major-mode 'dired-mode))
+    (let ((inhibit-read-only t)
+          (dotdot (with-temp-buffer
+                    (when (eq 0 (call-process "ls" nil t nil "-ld" ".."))
+                      (buffer-string)))))
+      (goto-char (point-min))
+      (forward-line 2) ;; Знайти місце після заголовка
+      (message "DOT")
+      (insert dotdot))))
+
+(defun my-dired-show-hidden-files ()
+  "Enable showing hidden files in Dired."
+  (interactive)
+  (setq dired-listing-switches "-alh --group-directories-first")
+  (message "Hidden files: ON")
+  (dired-sort-other dired-listing-switches))
+
+(defun my-dired-hide-hidden-files ()
+  "Disable showing hidden files in Dired and insert .. manually."
+  (interactive)
+  (setq dired-listing-switches "-lh --group-directories-first")
+  (message "Hidden files: OFF")
+  (dired-sort-other dired-listing-switches)
+  (my-dired-insert-dot-dot))
+
 (defun my-dired-toggle-hidden ()
   "Toggle showing hidden files in Dired by modifying dired-listing-switches."
   (interactive)
   (setq my-dired-show-hidden (not my-dired-show-hidden))
   (if my-dired-show-hidden
-      (setq dired-listing-switches "-alh --group-directories-first")
-    (setq dired-listing-switches "-lh --group-directories-first"))
-  (dired-sort-other dired-listing-switches))
+      (my-dired-show-hidden-files)
+    (my-dired-hide-hidden-files))
+  (revert-buffer))
+
+(defvar my-dired-setup-in-progress nil
+  "Non-nil if `my-dired-setup-hook` is currently running to avoid recursion.")
+
+(defun my-dired-setup-hook ()
+  "Apply listing switches based on `my-dired-show-hidden`."
+  (interactive)
+  (unless my-dired-setup-in-progress
+    (let ((my-dired-setup-in-progress t))  ;; локально
+  (message "Setup state %s " my-dired-show-hidden)
+  (if my-dired-show-hidden
+      (my-dired-show-hidden-files)
+    (my-dired-hide-hidden-files)))))
+
+(defun my-dired-buffer-list-update-hook ()
+  (when (eq major-mode 'dired-mode)
+    (my-dired-setup-hook)))
+
+(add-hook 'buffer-list-update-hook #'my-dired-buffer-list-update-hook)
 
 ;; Функції для сортування за датою
 (defun my-dired-sort-by-date ()
