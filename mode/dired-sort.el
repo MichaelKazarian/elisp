@@ -12,21 +12,18 @@
 ;;; Commentary:
 
 ;; This minor mode provides a convenient way to toggle the visibility of hidden
-;; files (dotfiles) in Dired buffers. It also ensures that the `..` parent
-;; directory entry is manually inserted when hidden files are turned off.
-
-;; Features:
+;; files (dotfiles) in Dired buffers, as well as flexible sorting options.
 ;;
-;; - Toggle between showing and hiding hidden files (dotfiles).
-;; - Automatically inserts `..` when hidden files are not shown.
-;; - Supports sorting by:
-;;   - Name (default)
-;;   - Date (newest first)
-;;   - Date (oldest first)
-;; - Respects hidden file visibility state when changing sort order.
-;; - Tracks global state with `dired-sort-show-hidden` and `dired-sort--sort-flags`.
-;; - Automatically updates Dired view on buffer/window changes.
-
+;; Features:
+;; - Toggle showing/hiding hidden files (dotfiles) with automatic insertion of `..` when hidden files are off.
+;; - Sort Dired buffers by:
+;;     - Name (normal and reverse)
+;;     - Modification date (normal and reverse)
+;;     - File extension (normal and reverse)
+;; - Sorting respects the hidden files visibility state.
+;; - Uses `dired-sort-extra-switches` to manage sorting flags separately.
+;; - Automatically updates Dired buffers on buffer/window changes.
+;;
 ;; Usage:
 ;;
 ;; 1. Place this file in your load-path and add to your init file:
@@ -34,23 +31,34 @@
 ;;    (require 'dired-sort)
 ;;    (dired-sort-mode 1)
 ;;
-;; 2. Use the following interactive commands:
+;; 2. Toggle hidden files visibility with:
 ;;
-;;    M-x dired-sort-toggle-hidden        ;; toggle visibility of hidden files
-;;    M-x dired-sort-by-name              ;; sort by name (default)
-;;    M-x dired-sort-by-date              ;; sort by date (newest first)
-;;    M-x dired-sort-by-date-reverse      ;; sort by date (oldest first)
+;;    M-x dired-sort-toggle-hidden
 ;;
-;; 3. Optional keybindings in Dired mode:
+;; 3. Sort using commands:
+;;
+;;    - dired-sort-by-name            (sort by name)
+;;    - dired-sort-by-name-reverse    (sort by name reverse)
+;;    - dired-sort-by-date            (sort by modification date)
+;;    - dired-sort-by-date-reverse    (sort by modification date reverse)
+;;    - dired-sort-by-extension       (sort by extension)
+;;    - dired-sort-by-extension-reverse (sort by extension reverse)
+;;
+;; 4. Bind keys as desired, e.g.:
 ;;
 ;;    (with-eval-after-load 'dired
 ;;      (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden)
-;;      (define-key dired-mode-map (kbd "C-c n") #'dired-sort-by-name)
-;;      (define-key dired-mode-map (kbd "C-c d") #'dired-sort-by-date)
-;;      (define-key dired-mode-map (kbd "C-c r") #'dired-sort-by-date-reverse))
+;;      ;; Example prefix map:
+;;      (define-prefix-command 'dired-sort-map)
+;;      (define-key dired-mode-map (kbd "ESC ESC") 'dired-sort-map)
+;;      (define-key dired-sort-map (kbd "d") #'dired-sort-by-date)
+;;      (define-key dired-sort-map (kbd "d r") #'dired-sort-by-date-reverse)
+;;      (define-key dired-sort-map (kbd "n") #'dired-sort-by-name)
+;;      (define-key dired-sort-map (kbd "n r") #'dired-sort-by-name-reverse)
+;;      (define-key dired-sort-map (kbd "e") #'dired-sort-by-extension)
+;;      (define-key dired-sort-map (kbd "e r") #'dired-sort-by-extension-reverse))
 ;;
-;; 4. The mode automatically updates listing style and hidden file visibility
-;;    when switching Dired buffers or windows.
+;; 5. After invoking a sort command, the Dired buffer refreshes automatically.
 
 ;;; Code:
 
@@ -64,8 +72,8 @@ This variable is buffer-local in Dired buffers."
   :type 'boolean
   :group 'dired-sort)
 
-(defvar dired-sort-extra-switches ""
-  "Extra switches passed to ls for sorting in Dired, e.g. \"-t\" or \"-t -r\".")
+(defvar-local dired-sort-extra-switches ""
+  "Extra switches like -t or -r used for sorting in Dired.")
 
 (defun dired-sort--insert-dot-dot ()
   "Insert `ls -ld ..` output in Dired when hidden files are off."
@@ -84,7 +92,7 @@ This variable is buffer-local in Dired buffers."
   (interactive)
   (setq dired-listing-switches
         (format "-alh --group-directories-first %s" dired-sort-extra-switches))
-  (message "Hidden files: ON")
+  ;; (message "Hidden files: ON")
   (dired-sort-other dired-listing-switches))
 
 (defun dired-sort-hide-hidden-files ()
@@ -92,7 +100,7 @@ This variable is buffer-local in Dired buffers."
   (interactive)
   (setq dired-listing-switches
         (format "-lh --group-directories-first %s" dired-sort-extra-switches))
-  (message "Hidden files: OFF")
+  ;; (message "Hidden files: OFF")
   (dired-sort-other dired-listing-switches)
   (dired-sort--insert-dot-dot))
 
@@ -106,19 +114,38 @@ This variable is buffer-local in Dired buffers."
   (revert-buffer))
 
 (defun dired-sort-by-name ()
-  "Sort Dired by name (default)."
+  "Sort by name."
   (interactive)
   (setq dired-sort-extra-switches "")
   (dired-sort--setup))
 
+(defun dired-sort-by-name-reverse ()
+  "Sort by name in reverse."
+  (interactive)
+  (setq dired-sort-extra-switches "-r")
+  (dired-sort--setup))
+
+(defun dired-sort-by-extension ()
+  "Sort by file extension."
+  (interactive)
+  (setq dired-sort-extra-switches "-X")
+  (dired-sort--setup))
+
+(defun dired-sort-by-extension-reverse ()
+  "Sort by file extension, reverse."
+  (interactive)
+  (setq dired-sort-extra-switches "-X -r")
+  (dired-sort--setup))
+
+
 (defun dired-sort-by-date ()
-  "Sort Dired by date (oldest first)."
+  "Sort by modification time (oldest first)."
   (interactive)
   (setq dired-sort-extra-switches "-t -r")
   (dired-sort--setup))
 
 (defun dired-sort-by-date-reverse ()
-  "Sort Dired by date in reverse (newest first)."
+  "Sort by modification time, reverse (newest first)."
   (interactive)
   (setq dired-sort-extra-switches "-t")
   (dired-sort--setup))
@@ -151,10 +178,13 @@ This variable is buffer-local in Dired buffers."
     (remove-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)))
 
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden)
-  (define-key dired-mode-map (kbd "C-c n") #'dired-sort-by-name)
-  (define-key dired-mode-map (kbd "C-c d") #'dired-sort-by-date)
-  (define-key dired-mode-map (kbd "C-c r") #'dired-sort-by-date-reverse))
+  (define-key dired-mode-map (kbd "M-g n") #'dired-sort-by-name)
+  (define-key dired-mode-map (kbd "M-g r n") #'dired-sort-by-name-reverse)
+  (define-key dired-mode-map (kbd "M-g d") #'dired-sort-by-date)
+  (define-key dired-mode-map (kbd "M-g r d") #'dired-sort-by-date-reverse)
+  (define-key dired-mode-map (kbd "M-g x") #'dired-sort-by-extension)
+  (define-key dired-mode-map (kbd "M-g r x") #'dired-sort-by-extension-reverse)
+  (define-key dired-mode-map (kbd "M-g h") #'dired-sort-toggle-hidden))
 
 (provide 'dired-sort)
 
