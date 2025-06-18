@@ -1,8 +1,8 @@
-;;; dired-sort.el --- Toggle hidden files and add `..` in Dired -*- lexical-binding: t; -*-
+;;; dired-sort.el
 
 ;; Copyright (C) 2025 Mykhailo Kazarian
 
-;; Author: Your Name <your@email.com>
+;; Author: Your Name <michael.kazarian@gmail.com>
 ;; Version: 0.1
 ;; Keywords: dired, convenience
 ;; Package-Requires: ((emacs "24.4"))
@@ -16,9 +16,15 @@
 ;; directory entry is manually inserted when hidden files are turned off.
 
 ;; Features:
-;; - Toggle between showing/hiding hidden files (dotfiles).
+;;
+;; - Toggle between showing and hiding hidden files (dotfiles).
 ;; - Automatically inserts `..` when hidden files are not shown.
-;; - Tracks global state with `dired-sort-show-hidden`.
+;; - Supports sorting by:
+;;   - Name (default)
+;;   - Date (newest first)
+;;   - Date (oldest first)
+;; - Respects hidden file visibility state when changing sort order.
+;; - Tracks global state with `dired-sort-show-hidden` and `dired-sort--sort-flags`.
 ;; - Automatically updates Dired view on buffer/window changes.
 
 ;; Usage:
@@ -28,13 +34,23 @@
 ;;    (require 'dired-sort)
 ;;    (dired-sort-mode 1)
 ;;
-;; 2. Use the command `M-x dired-sort-toggle-hidden` to toggle visibility
-;;    of hidden files.
+;; 2. Use the following interactive commands:
 ;;
-;; 3. You can bind it to a key in Dired:
+;;    M-x dired-sort-toggle-hidden        ;; toggle visibility of hidden files
+;;    M-x dired-sort-by-name              ;; sort by name (default)
+;;    M-x dired-sort-by-date              ;; sort by date (newest first)
+;;    M-x dired-sort-by-date-reverse      ;; sort by date (oldest first)
+;;
+;; 3. Optional keybindings in Dired mode:
 ;;
 ;;    (with-eval-after-load 'dired
-;;      (define-key dired-mode-map (kbd "H") #'dired-sort-toggle-hidden))
+;;      (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden)
+;;      (define-key dired-mode-map (kbd "C-c n") #'dired-sort-by-name)
+;;      (define-key dired-mode-map (kbd "C-c d") #'dired-sort-by-date)
+;;      (define-key dired-mode-map (kbd "C-c r") #'dired-sort-by-date-reverse))
+;;
+;; 4. The mode automatically updates listing style and hidden file visibility
+;;    when switching Dired buffers or windows.
 
 ;;; Code:
 
@@ -47,6 +63,9 @@
 This variable is buffer-local in Dired buffers."
   :type 'boolean
   :group 'dired-sort)
+
+(defvar dired-sort-extra-switches ""
+  "Extra switches passed to ls for sorting in Dired, e.g. \"-t\" or \"-t -r\".")
 
 (defun dired-sort--insert-dot-dot ()
   "Insert `ls -ld ..` output in Dired when hidden files are off."
@@ -63,14 +82,16 @@ This variable is buffer-local in Dired buffers."
 (defun dired-sort-show-hidden-files ()
   "Enable showing hidden files in Dired."
   (interactive)
-  (setq dired-listing-switches "-alh --group-directories-first")
+  (setq dired-listing-switches
+        (format "-alh --group-directories-first %s" dired-sort-extra-switches))
   (message "Hidden files: ON")
   (dired-sort-other dired-listing-switches))
 
 (defun dired-sort-hide-hidden-files ()
   "Disable showing hidden files in Dired and insert `..` manually."
   (interactive)
-  (setq dired-listing-switches "-lh --group-directories-first")
+  (setq dired-listing-switches
+        (format "-lh --group-directories-first %s" dired-sort-extra-switches))
   (message "Hidden files: OFF")
   (dired-sort-other dired-listing-switches)
   (dired-sort--insert-dot-dot))
@@ -84,11 +105,30 @@ This variable is buffer-local in Dired buffers."
     (dired-sort-hide-hidden-files))
   (revert-buffer))
 
+(defun dired-sort-by-name ()
+  "Sort Dired by name (default)."
+  (interactive)
+  (setq dired-sort-extra-switches "")
+  (dired-sort--setup))
+
+(defun dired-sort-by-date ()
+  "Sort Dired by date (oldest first)."
+  (interactive)
+  (setq dired-sort-extra-switches "-t -r")
+  (dired-sort--setup))
+
+(defun dired-sort-by-date-reverse ()
+  "Sort Dired by date in reverse (newest first)."
+  (interactive)
+  (setq dired-sort-extra-switches "-t")
+  (dired-sort--setup))
+
 (defvar-local dired-sort--in-progress nil
   "Prevent recursion during setup.")
 
 (defun dired-sort--setup ()
   "Apply listing switches based on `dired-sort-show-hidden`."
+  (interactive)
   (unless dired-sort--in-progress
     (let ((dired-sort--in-progress t))
       (if dired-sort-show-hidden
@@ -111,7 +151,10 @@ This variable is buffer-local in Dired buffers."
     (remove-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)))
 
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden))
+  (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden)
+  (define-key dired-mode-map (kbd "C-c n") #'dired-sort-by-name)
+  (define-key dired-mode-map (kbd "C-c d") #'dired-sort-by-date)
+  (define-key dired-mode-map (kbd "C-c r") #'dired-sort-by-date-reverse))
 
 (provide 'dired-sort)
 
