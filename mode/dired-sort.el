@@ -178,14 +178,87 @@ This variable is buffer-local in Dired buffers."
       (add-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)
     (remove-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)))
 
+(defconst dired-sort--commands-map
+  '((dired-sort-by-name               "M-g n"   "Sort by name.")
+    (dired-sort-by-name-reverse      "M-g r n" "Sort by name (reverse).")
+    (dired-sort-by-date              "M-g d"   "Sort by date.")
+    (dired-sort-by-date-reverse      "M-g r d" "Sort by date (reverse).")
+    (dired-sort-by-extension         "M-g x"   "Sort by extension.")
+    (dired-sort-by-extension-reverse "M-g r x" "Sort by extension (reverse).")
+    (dired-sort-toggle-hidden        "M-g h"   "Toggle hidden files.")
+    (dired-sort-show-menu            "C-c C-s" "Show sort command menu.")))
+
+(defun dired-sort--active-p (fn)
+  "Return non-nil if FN represents current sort state."
+  (cond
+   ((eq fn 'dired-sort-by-name)
+    (string= dired-sort-extra-switches ""))
+   ((eq fn 'dired-sort-by-name-reverse)
+    (string= dired-sort-extra-switches "-r"))
+   ((eq fn 'dired-sort-by-date)
+    (string= dired-sort-extra-switches "-t -r"))
+   ((eq fn 'dired-sort-by-date-reverse)
+    (string= dired-sort-extra-switches "-t"))
+   ((eq fn 'dired-sort-by-extension)
+    (string= dired-sort-extra-switches "-X"))
+   ((eq fn 'dired-sort-by-extension-reverse)
+    (string= dired-sort-extra-switches "-X -r"))
+   ((eq fn 'dired-sort-toggle-hidden)
+    dired-sort-show-hidden)
+   (t nil)))
+
+(defun dired-sort--format-menu-line (index fn key desc num-width desc-width)
+  "Format one menu line for FN with given widths."
+  (let* ((active (dired-sort--active-p fn))
+         (marker (if active "*" " ")))
+    (format (format "%%%dd  [%%s] %%-%ds  %%s" num-width desc-width)
+            index marker desc key)))
+
+(defun dired-sort--build-menu-lines ()
+  "Build aligned menu lines for `dired-sort-show-menu`."
+  (let* ((indexed
+          (cl-mapcar (lambda (entry index)
+                       (list index entry))
+                     dired-sort--commands-map
+                     (number-sequence 1 (length dired-sort--commands-map))))
+         (num-width (length (number-to-string (length indexed))))
+         (desc-width
+          (apply #'max (mapcar (lambda (item)
+                                 (length (nth 2 (cadr item))))
+                               indexed))))
+    (mapcar
+     (lambda (item)
+       (let* ((index (car item))
+              (entry (cadr item))
+              (fn (nth 0 entry))
+              (key (nth 1 entry))
+              (desc (nth 2 entry)))
+         (dired-sort--format-menu-line index fn key desc num-width desc-width)))
+     indexed)))
+
+(defun dired-sort-show-menu ()
+  "Show a clean, aligned numbered menu of Dired sort commands and execute selected one."
+  (interactive)
+  (let* ((menu-lines (dired-sort--build-menu-lines))
+         (prompt (concat "Choose sort option:\n\n"
+                         (string-join menu-lines "\n")
+                         "\n\nEnter number: "))
+         (choice (read-number prompt))
+         (selected (nth (1- choice) dired-sort--commands-map)))
+    (if selected
+        (call-interactively (nth 0 selected))
+      (message "Invalid selection"))))
+
+(defun dired-sort-setup-keys ()
+  "Bind keys from `dired-sort--commands-map` in `dired-mode-map`."
+  (dolist (entry dired-sort--commands-map)
+    (let ((fn (nth 0 entry))
+          (key (nth 1 entry)))
+      (when (and fn key)
+        (define-key dired-mode-map (kbd key) fn)))))
+
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "M-g n") #'dired-sort-by-name)
-  (define-key dired-mode-map (kbd "M-g r n") #'dired-sort-by-name-reverse)
-  (define-key dired-mode-map (kbd "M-g d") #'dired-sort-by-date)
-  (define-key dired-mode-map (kbd "M-g r d") #'dired-sort-by-date-reverse)
-  (define-key dired-mode-map (kbd "M-g x") #'dired-sort-by-extension)
-  (define-key dired-mode-map (kbd "M-g r x") #'dired-sort-by-extension-reverse)
-  (define-key dired-mode-map (kbd "M-g h") #'dired-sort-toggle-hidden))
+  (dired-sort-setup-keys))
 
 (provide 'dired-sort)
 
