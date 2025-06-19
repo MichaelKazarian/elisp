@@ -77,7 +77,7 @@ This variable is buffer-local in Dired buffers."
 
 (defun dired-sort--insert-dot-dot ()
   "Insert `ls -ld ..` output in Dired when hidden files are off."
-  (when (and (not dired-sort-show-hidden)
+  (when (and ;(not dired-sort-show-hidden)
              (eq major-mode 'dired-mode))
     (let ((inhibit-read-only t)
           (dotdot (with-temp-buffer
@@ -91,9 +91,10 @@ This variable is buffer-local in Dired buffers."
   "Enable showing hidden files in Dired."
   (interactive)
   (setq dired-listing-switches
-        (format "-alh --group-directories-first %s" dired-sort-extra-switches))
+        (format "-Alh --group-directories-first %s" dired-sort-extra-switches))
   ;; (message "Hidden files: ON")
-  (dired-sort-other dired-listing-switches))
+  (dired-sort-other dired-listing-switches)
+  (dired-sort--insert-dot-dot))
 
 (defun dired-sort-hide-hidden-files ()
   "Disable showing hidden files in Dired and insert `..` manually."
@@ -111,7 +112,7 @@ This variable is buffer-local in Dired buffers."
   (if dired-sort-show-hidden
       (dired-sort-show-hidden-files)
     (dired-sort-hide-hidden-files))
-  (revert-buffer))
+  (dired-sort--setup))
 
 (defun dired-sort-by-name ()
   "Sort by name."
