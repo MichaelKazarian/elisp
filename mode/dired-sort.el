@@ -179,14 +179,14 @@ This variable is buffer-local in Dired buffers."
     (remove-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)))
 
 (defconst dired-sort--commands-map
-  '((dired-sort-by-name               "M-g n"   "Sort by name.")
+  '((dired-sort-by-name              "M-g n"   "Sort by name.")
     (dired-sort-by-name-reverse      "M-g r n" "Sort by name (reverse).")
     (dired-sort-by-date              "M-g d"   "Sort by date.")
     (dired-sort-by-date-reverse      "M-g r d" "Sort by date (reverse).")
     (dired-sort-by-extension         "M-g x"   "Sort by extension.")
     (dired-sort-by-extension-reverse "M-g r x" "Sort by extension (reverse).")
     (dired-sort-toggle-hidden        "M-g h"   "Toggle hidden files.")
-    (dired-sort-show-menu            "C-c C-s" "Show sort command menu.")))
+    (dired-sort-show-menu            "C-c m"   "Show sort command menu.")))
 
 (defun dired-sort--active-p (fn)
   "Return non-nil if FN represents current sort state."
@@ -238,7 +238,7 @@ This variable is buffer-local in Dired buffers."
      indexed)))
 
 (defun dired-sort-show-menu ()
-  "Show a clean, aligned numbered menu of Dired sort commands and execute selected one."
+  "Show aligned numbered menu of Dired sort commands and execute selected one."
   (interactive)
   (let* ((menu-lines (dired-sort--build-menu-lines))
          (prompt (concat "Choose sort option:\n"
@@ -250,6 +250,36 @@ This variable is buffer-local in Dired buffers."
         (call-interactively (nth 0 selected))
       (message "Invalid selection"))))
 
+(defun dired-sort-show-completion ()
+  "Show a completion menu of Dired sort commands with numbers and execute the selected one."
+  (interactive)
+  (let* ((indexed
+          (cl-mapcar (lambda (entry index)
+                       (list index entry))
+                     dired-sort--commands-map
+                     (number-sequence 1 (length dired-sort--commands-map))))
+         (num-width (length (number-to-string (length indexed))))
+         (desc-width
+          (apply #'max (mapcar (lambda (item)
+                                 (length (nth 2 (cadr item))))
+                               indexed)))
+         (candidates
+          (mapcar
+           (lambda (item)
+             (let* ((index (car item))
+                    (entry (cadr item))
+                    (fn (nth 0 entry))
+                    (desc (nth 2 entry))
+                    (key (substitute-command-keys (format "\\[%s]" fn)))
+                    (display (format (format "%%%dd. %%-%ds (%%s)"
+                                             num-width desc-width)
+                                     index desc key)))
+               (cons display fn)))
+           indexed))
+         (choice (completing-read "Choose sort option: " candidates nil t)))
+    (when-let ((fn (cdr (assoc choice candidates))))
+      (call-interactively fn))))
+
 (defun dired-sort-setup-keys ()
   "Bind keys from `dired-sort--commands-map` in `dired-mode-map`."
   (dolist (entry dired-sort--commands-map)
@@ -260,7 +290,7 @@ This variable is buffer-local in Dired buffers."
 
 (with-eval-after-load 'dired
   (dired-sort-setup-keys)
-   (define-key dired-mode-map (kbd "C-c m") #'dired-sort-show-menu))
+  (define-key dired-mode-map (kbd "C-c c") #'dired-sort-show-completion))
 
 (provide 'dired-sort)
 
