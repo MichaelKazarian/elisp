@@ -207,15 +207,16 @@ This variable is buffer-local in Dired buffers."
     dired-sort-show-hidden)
    (t nil)))
 
-(defun dired-sort--format-menu-line (index fn key desc num-width desc-width)
+(defun dired-sort--format-menu-line (index fn desc num-width desc-width key)
   "Format one menu line for FN with given widths."
   (let* ((active (dired-sort--active-p fn))
          (marker (if active "*" " ")))
-    (format (format "%%%dd  [%%s] %%-%ds  %%s" num-width desc-width)
+    (format (format "%%%dd  [%%s] %%-%ds  %%s"
+                    num-width desc-width)
             index marker desc key)))
 
 (defun dired-sort--build-menu-lines ()
-  "Build aligned menu lines for `dired-sort-show-menu`."
+  "Build aligned menu lines for `dired-sort-show-menu`, using actual key bindings."
   (let* ((indexed
           (cl-mapcar (lambda (entry index)
                        (list index entry))
@@ -231,18 +232,18 @@ This variable is buffer-local in Dired buffers."
        (let* ((index (car item))
               (entry (cadr item))
               (fn (nth 0 entry))
-              (key (nth 1 entry))
-              (desc (nth 2 entry)))
-         (dired-sort--format-menu-line index fn key desc num-width desc-width)))
+              (desc (nth 2 entry))
+              (key (substitute-command-keys (format "\\[%s]" fn))))
+         (dired-sort--format-menu-line index fn desc num-width desc-width key)))
      indexed)))
 
 (defun dired-sort-show-menu ()
   "Show a clean, aligned numbered menu of Dired sort commands and execute selected one."
   (interactive)
   (let* ((menu-lines (dired-sort--build-menu-lines))
-         (prompt (concat "Choose sort option:\n\n"
+         (prompt (concat "Choose sort option:\n"
                          (string-join menu-lines "\n")
-                         "\n\nEnter number: "))
+                         "\nEnter number: "))
          (choice (read-number prompt))
          (selected (nth (1- choice) dired-sort--commands-map)))
     (if selected
@@ -258,7 +259,8 @@ This variable is buffer-local in Dired buffers."
         (define-key dired-mode-map (kbd key) fn)))))
 
 (with-eval-after-load 'dired
-  (dired-sort-setup-keys))
+  (dired-sort-setup-keys)
+   (define-key dired-mode-map (kbd "C-c m") #'dired-sort-show-menu))
 
 (provide 'dired-sort)
 
