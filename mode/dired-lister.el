@@ -1,6 +1,6 @@
 ;;; dired-lister.el --- Minor mode for previewing files in Dired
 
-;; Copyright (C) 2025 Michael Kazarian
+;; Copyright (C) 2025 Mykhailo Kazarian
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
