@@ -11,54 +11,45 @@
 
 ;;; Commentary:
 
-;; This minor mode provides a convenient way to toggle the visibility of hidden
-;; files (dotfiles) in Dired buffers, as well as flexible sorting options.
+;; `dired-sort-mode` is a global minor mode that provides enhanced control over
+;; sorting and hidden file visibility in Dired buffers.
 ;;
 ;; Features:
-;; - Toggle showing/hiding hidden files (dotfiles) with automatic insertion of `..` when hidden files are off.
-;; - Sort Dired buffers by:
-;;     - Name (normal and reverse)
-;;     - Modification date (normal and reverse)
-;;     - File extension (normal and reverse)
-;; - Sorting respects the hidden files visibility state.
-;; - Uses `dired-sort-extra-switches` to manage sorting flags separately.
-;; - Automatically updates Dired buffers on buffer/window changes.
+;;
+;; - Toggle showing/hiding hidden files (dotfiles). When hidden files are off,
+;;   the `..` entry is manually inserted for convenience.
+;; - Flexible sorting options:
+;;     - by name (normal and reverse)
+;;     - by modification date (newest/oldest first)
+;;     - by file extension (normal and reverse)
+;; - Sorting always respects the current visibility state of hidden files.
+;; - Automatically updates Dired buffers when switching windows or buffers.
+;; - Clean and aligned menu with numbered sort options, or `completing-read` interface.
+;; - Menu highlights the currently active sort mode.
 ;;
 ;; Usage:
 ;;
-;; 1. Place this file in your load-path and add to your init file:
+;; 1. Install and enable the mode:
 ;;
 ;;    (require 'dired-sort)
 ;;    (dired-sort-mode 1)
 ;;
-;; 2. Toggle hidden files visibility with:
+;; 2. Bind keys or use commands directly:
 ;;
-;;    M-x dired-sort-toggle-hidden
+;;    - `M-x dired-sort-toggle-hidden`
+;;    - `M-x dired-sort-show-menu`
+;;    - `M-x dired-sort-show-completion`
+;;    - `M-x dired-sort-by-name`, `...-reverse`, `...-by-date`, etc.
 ;;
-;; 3. Sort using commands:
+;; 3. Optional: bind your preferred keymap (automatically set if using `dired-sort-setup-keys`)
 ;;
-;;    - dired-sort-by-name            (sort by name)
-;;    - dired-sort-by-name-reverse    (sort by name reverse)
-;;    - dired-sort-by-date            (sort by modification date)
-;;    - dired-sort-by-date-reverse    (sort by modification date reverse)
-;;    - dired-sort-by-extension       (sort by extension)
-;;    - dired-sort-by-extension-reverse (sort by extension reverse)
+;;    Example:
+;;      (with-eval-after-load 'dired
+;;        (dired-sort-setup-keys)
+;;        (define-key dired-mode-map (kbd "C-c m") #'dired-sort-show-menu)
+;;        (define-key dired-mode-map (kbd "C-c c") #'dired-sort-show-completion))
 ;;
-;; 4. Bind keys as desired, e.g.:
-;;
-;;    (with-eval-after-load 'dired
-;;      (define-key dired-mode-map (kbd "C-c h") #'dired-sort-toggle-hidden)
-;;      ;; Example prefix map:
-;;      (define-prefix-command 'dired-sort-map)
-;;      (define-key dired-mode-map (kbd "ESC ESC") 'dired-sort-map)
-;;      (define-key dired-sort-map (kbd "d") #'dired-sort-by-date)
-;;      (define-key dired-sort-map (kbd "d r") #'dired-sort-by-date-reverse)
-;;      (define-key dired-sort-map (kbd "n") #'dired-sort-by-name)
-;;      (define-key dired-sort-map (kbd "n r") #'dired-sort-by-name-reverse)
-;;      (define-key dired-sort-map (kbd "e") #'dired-sort-by-extension)
-;;      (define-key dired-sort-map (kbd "e r") #'dired-sort-by-extension-reverse))
-;;
-;; 5. After invoking a sort command, the Dired buffer refreshes automatically.
+;; Sorting is updated live, and menu reflects current active mode with an asterisk.
 
 ;;; Code:
 
@@ -250,35 +241,34 @@ This variable is buffer-local in Dired buffers."
         (call-interactively (nth 0 selected))
       (message "Invalid selection"))))
 
-(defun dired-sort-show-completion ()
-  "Show a completion menu of Dired sort commands with numbers and execute the selected one."
-  (interactive)
-  (let* ((indexed
-          (cl-mapcar (lambda (entry index)
-                       (list index entry))
-                     dired-sort--commands-map
-                     (number-sequence 1 (length dired-sort--commands-map))))
-         (num-width (length (number-to-string (length indexed))))
-         (desc-width
-          (apply #'max (mapcar (lambda (item)
-                                 (length (nth 2 (cadr item))))
-                               indexed)))
-         (candidates
-          (mapcar
-           (lambda (item)
-             (let* ((index (car item))
-                    (entry (cadr item))
-                    (fn (nth 0 entry))
-                    (desc (nth 2 entry))
-                    (key (substitute-command-keys (format "\\[%s]" fn)))
-                    (display (format (format "%%%dd. %%-%ds (%%s)"
-                                             num-width desc-width)
-                                     index desc key)))
-               (cons display fn)))
-           indexed))
-         (choice (completing-read "Choose sort option: " candidates nil t)))
-    (when-let ((fn (cdr (assoc choice candidates))))
-      (call-interactively fn))))
+(defun dired-sort--indexed-commands ()
+  "Return list of (index command-entry) pairs."
+  (cl-mapcar (lambda (entry index)
+               (list index entry))
+             dired-sort--commands-map
+             (number-sequence 1 (length dired-sort--commands-map))))
+
+(defun dired-sort--description-width (indexed)
+  "Return maximum description width from INDEXED command list."
+  (apply #'max
+         (mapcar (lambda (item)
+                   (length (nth 2 (cadr item))))
+                 indexed)))
+
+(defun dired-sort--completion-candidates (indexed num-width desc-width)
+  "Build display strings and associate them with commands for completion."
+  (mapcar
+   (lambda (item)
+     (let* ((index (car item))
+            (entry (cadr item))
+            (fn (nth 0 entry))
+            (desc (nth 2 entry))
+            (key (substitute-command-keys (format "\\[%s]" fn)))
+            (display (format (format "%%%dd. %%-%ds (%%s)"
+                                     num-width desc-width)
+                             index desc key)))
+       (cons display fn)))
+   indexed))
 
 (defun dired-sort-setup-keys ()
   "Bind keys from `dired-sort--commands-map` in `dired-mode-map`."
