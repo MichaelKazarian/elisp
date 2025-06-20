@@ -6,4 +6,5 @@ TAGS
 # Ігнорувати усі файли в цих теках
 tmp/
 .emacs.d/
+mode/dired-*
 
