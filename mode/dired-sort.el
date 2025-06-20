@@ -170,14 +170,14 @@ This variable is buffer-local in Dired buffers."
     (remove-hook 'buffer-list-update-hook #'dired-sort--maybe-setup)))
 
 (defconst dired-sort--commands-map
-  '((dired-sort-by-name              "M-g n"   "Sort by name.")
-    (dired-sort-by-name-reverse      "M-g r n" "Sort by name (reverse).")
+  '((dired-sort-by-name              "M-g n"   "Sort by name")
+    (dired-sort-by-name-reverse      "M-g r n" "Sort by name (reverse)")
     (dired-sort-by-date              "M-g d"   "Sort by date.")
-    (dired-sort-by-date-reverse      "M-g r d" "Sort by date (reverse).")
-    (dired-sort-by-extension         "M-g x"   "Sort by extension.")
-    (dired-sort-by-extension-reverse "M-g r x" "Sort by extension (reverse).")
-    (dired-sort-toggle-hidden        "M-g h"   "Toggle hidden files.")
-    (dired-sort-show-menu            "C-c m"   "Show sort command menu.")))
+    (dired-sort-by-date-reverse      "M-g r d" "Sort by date (reverse)")
+    (dired-sort-by-extension         "M-g x"   "Sort by extension")
+    (dired-sort-by-extension-reverse "M-g r x" "Sort by extension (reverse)")
+    (dired-sort-toggle-hidden        "M-g h"   "Toggle hidden files")
+    (dired-sort-show-menu            "C-c m"   "Show sort command menu")))
 
 (defun dired-sort--active-p (fn)
   "Return non-nil if FN represents current sort state."
