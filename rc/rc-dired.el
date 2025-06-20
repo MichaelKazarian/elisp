@@ -4,6 +4,7 @@
 ;;
 ;; Author: Michael Kazarian <michael.kazarian@gmail.com>
 (add-to-list 'load-path (expand-file-name "~/elisp/mode/dired-sort"))
+(add-to-list 'load-path (expand-file-name "~/elisp/mode/dired-lister"))
 (require 'dired-lister)
 (require 'dired-sort)
 (dired-lister-mode 1)
