@@ -76,13 +76,13 @@
         ))
 
 (defvar my-window-max-height 25
-  "Висота вікна, коли воно активне.")
+  "Height of the window when it is active.")
 
 (defvar my-window-min-height 10
-  "Мінімальна висота вікна, коли воно не активне.")
+  "Minimum height of the window when it is not active.")
 
 (defun my-adjust-popwin-windows ()
-  "Розширює або зменшує вікна popwin, які розташовані внизу."
+  "Minimum height of the window when it is not active."
   (dolist (win (window-list))
     (let ((buf (window-buffer win)))
       (when (and buf
