@@ -97,4 +97,8 @@
 ;; Remind current line status by current buffer.
 (global-line-reminder-mode t)
 
+;; https://github.com/bmag/imenu-list
+(setq imenu-list-position 'left)
+(global-set-key (kbd "\e\el") #'imenu-list-smart-toggle)
+
 ;;; rc-prog.el ends here
