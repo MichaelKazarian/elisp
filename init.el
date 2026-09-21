@@ -6,7 +6,7 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-
+(setq warning-minimum-level :error)
 
 ;; Some useful packages:
 ;; color-theme-sanityinc-solarized doom-themes nova-theme
