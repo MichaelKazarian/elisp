@@ -51,16 +51,12 @@
 
 ;;Font
 (require 'font-lock)
-(cond ((equal system-type 'gnu/linux) (setq ttf-font "FiraCode"))
-      ;((equal system-type 'android) (set-frame-font "monospace-16" nil t)) ;; Android system font
-      ((equal system-type 'android) (set-frame-font "Fira Code-16" nil t))
-      ((equal system-type 'darwin) (setq ttf-font "Inconsolata LGC"))
-      (t (setq ttf-font "Consolas")))
-(cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
-      ((equal system-type 'darwin) (setq ttf-font-s 180))
-      (t (setq ttf-font-s 120)))
-(set-face-attribute 'default nil
-                    :family ttf-font :height ttf-font-s :weight 'normal)
+(cond ((equal system-type 'gnu/linux) (set-frame-font "Fira Code-16" nil t))
+      ;((equal system-type 'android) (set-frame-font "monospace-14" nil t)) ;; Android system font
+      ((equal system-type 'android) (set-frame-font "Fira Code-14" nil t))
+      ((equal system-type 'darwin) (set-frame-font "Inconsolata LGC-16" nil t))
+      (t (set-frame-font "Consolas-12" nil t)))
+
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 (setq unibyte-display-via-language-environment t)
