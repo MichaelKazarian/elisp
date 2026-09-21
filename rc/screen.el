@@ -52,6 +52,8 @@
 ;;Font
 (require 'font-lock)
 (cond ((equal system-type 'gnu/linux) (setq ttf-font "FiraCode"))
+      ;((equal system-type 'android) (set-frame-font "monospace-16" nil t)) ;; Android system font
+      ((equal system-type 'android) (set-frame-font "Fira Code-16" nil t))
       ((equal system-type 'darwin) (setq ttf-font "Inconsolata LGC"))
       (t (setq ttf-font "Consolas")))
 (cond ((equal system-type 'gnu/linux) (setq ttf-font-s 115))
