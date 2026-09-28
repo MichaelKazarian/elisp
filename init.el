@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;; Init file for custom settings
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -54,3 +55,4 @@
 (load "~/elisp/rc/savehistory")
 (load "~/elisp/rc/kbd.el")
 (load "~/elisp/rc/rc-dired.el")
+(load "~/elisp/rc/rc-nov.el")
