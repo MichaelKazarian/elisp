@@ -16,9 +16,9 @@
 ;(global-linum-mode 1)
 
 ;;Scroll
-(setq scroll-conservatively 50)
+(setq scroll-conservatively 10000)
 (setq scroll-preserve-screen-position 't)
-(setq scroll-margin 10)
+(setq scroll-margin 1)
 (global-set-key [vertical-scroll-bar down-mouse-1] 'scroll-bar-drag)
 
 ;; hour format
