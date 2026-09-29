@@ -29,6 +29,7 @@
 (add-to-list 'load-path "~/elisp/rc")
 (load "~/elisp/rc/editing.el")
 (load "~/elisp/rc/screen.el")
+(load "~/elisp/rc/rc-mouse.el")
 (load "~/elisp/rc/rc-completion.el")
 (load "~/elisp/rc/vcs.el")
 (load "~/elisp/rc/rc-prog.el")
