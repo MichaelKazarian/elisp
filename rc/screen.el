@@ -11,10 +11,6 @@
 ;;Line numbering
 (setq line-number-mode t)
 
-;; (when (version<= "26.0.50" emacs-version )
-;;   (global-display-line-numbers-mode))
-;(global-linum-mode 1)
-
 ;;Scroll
 (setq scroll-conservatively 10000)
 (setq scroll-preserve-screen-position 't)
@@ -76,18 +72,21 @@
   "Minimum height of the window when it is not active.")
 
 (defun my-adjust-popwin-windows ()
-  "Minimum height of the window when it is not active."
-  (dolist (win (window-list))
-    (let ((buf (window-buffer win)))
-      (when (and buf
-                 (assoc (buffer-name buf) popwin:special-display-config))
-        (let ((config (cdr (assoc (buffer-name buf) popwin:special-display-config))))
-          (when (eq (plist-get config :position) 'bottom)
-            (if (eq (selected-window) win)
-                (with-selected-window win
-                  (enlarge-window (- my-window-max-height (window-height))))
+   "Minimum height of the window when it is not active."
+  (when (cdr (window-list))             ; більше одного вікна
+    (let ((active (selected-window)))
+      (dolist (win (window-list))
+        (let* ((buf (window-buffer win))
+               (config (and buf (cdr (assoc (buffer-name buf)
+                                            popwin:special-display-config)))))
+          (when (and config
+                     (eq (plist-get config :position) 'bottom)
+                     (not (eq win (frame-root-window))))
+            (ignore-errors
               (with-selected-window win
-                (shrink-window (- (window-height) my-window-min-height))))))))))
+                (if (eq win active)
+                    (enlarge-window (- my-window-max-height (window-height)))
+                  (shrink-window (- (window-height) my-window-min-height)))))))))))
 
 (add-hook 'window-selection-change-functions
           (lambda (_) (my-adjust-popwin-windows)))
