@@ -17,7 +17,7 @@
             :packages (nov esxml)
             :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
-            :packages (magit magit-section with-editor llama cond-let
+            :packages (transient magit magit-section with-editor llama cond-let
                              elpy pyvenv highlight-indentation
                              highlight-function-calls
                              posframe pos-tip
