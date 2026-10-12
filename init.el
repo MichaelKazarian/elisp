@@ -15,7 +15,7 @@
                  "markdown" "rc-org" "backup" "savehistory" "kbd"))
     (reader :parent base
             :packages (nov esxml)
-            :rc ("rc-nov" "rc-pdf-text"))
+            :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
             :packages (magit magit-section with-editor llama cond-let
                              elpy pyvenv highlight-indentation
