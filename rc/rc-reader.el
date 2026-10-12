@@ -4,7 +4,7 @@
 (require 'recentf)
 (require 'seq)
 
-(defvar my/recent-regexp "\\.\\(epub\\|pdf\\|md\\|org|txt\\)\\'"
+(defvar my/recent-regexp "\\.\\(epub\\|pdf\\|md\\|org\\|txt\\)\\'"
   "Only files matching this regexp are listed and remembered.")
 (defvar my/recent-count 20
   "How many recent documents to show.")
@@ -152,5 +152,39 @@ directory is on its own line and still too long."
               (when w
                 (with-selected-window w
                   (my/recent-render))))))
+
+(defun my/doc-quit ()
+  "Close the current document buffer and leave its window."
+  (interactive)
+  (quit-window t))
+
+(defun my/touch-header ()
+  "Tappable header line: back to previous buffer / recent list / close."
+  (setq header-line-format
+        (list
+         (propertize " ◀ Back " 'face 'button 'mouse-face 'highlight
+                     'keymap (let ((m (make-sparse-keymap)))
+                               (define-key m [header-line mouse-1]
+                                           #'previous-buffer)
+                               m))
+         "  "
+         (propertize " ☰ Recent " 'face 'button 'mouse-face 'highlight
+                     'keymap (let ((m (make-sparse-keymap)))
+                               (define-key m [header-line mouse-1]
+                                           #'my/recent-show)
+                               m))
+         "  "
+         (propertize " ✕ Close " 'face 'button 'mouse-face 'highlight
+                     'keymap (let ((m (make-sparse-keymap)))
+                               (define-key m [header-line mouse-1]
+                                           #'my/doc-quit)
+                               m)))))
+
+(defalias 'pdf-text-quit #'my/doc-quit)
+
+;; (add-hook 'pdf-text-mode-hook #'my/touch-header)
+(add-hook 'nov-mode-hook #'my/touch-header)
+(add-hook 'text-mode-hook #'my/touch-header)
+(add-hook 'org-mode-hook #'my/touch-header)
 
 (global-set-key (kbd "C-c r") #'my/recent-show)
