@@ -59,16 +59,19 @@ directory is on its own line and still too long."
       (concat prefix tail))))
 
 (defun my/recent--entries ()
-  "Return (FILE . ACCESS-TIME) for recent documents, newest access first."
-  (let ((entries
-         (delq nil
-               (mapcar
-                (lambda (f)
-                  (let* ((f (expand-file-name f))
-                         (a (and (string-match-p my/recent-regexp f)
-                                 (file-attributes f)))) ; nil if file is gone
-                    (and a (cons f (file-attribute-access-time a)))))
-                recentf-list))))
+  "Return (FILE . ACCESS-TIME) for recent documents, newest access first.
+Entries that point to the same real file are listed once."
+  (let ((seen (make-hash-table :test #'equal))
+        entries)
+    (dolist (f recentf-list)
+      (let* ((f (expand-file-name f))
+             (a (and (string-match-p my/recent-regexp f)
+                     (file-attributes f)))) ; nil if file is gone
+        (when a
+          (let ((key (file-truename f)))
+            (unless (gethash key seen)
+              (puthash key t seen)
+              (push (cons f (file-attribute-access-time a)) entries))))))
     (seq-take (sort entries (lambda (a b) (time-less-p (cdr b) (cdr a))))
               my/recent-count)))
 
@@ -153,6 +156,50 @@ directory is on its own line and still too long."
                 (with-selected-window w
                   (my/recent-render))))))
 
+
+;;; RO
+(defun my/doc-edit-p ()
+  "Non-nil if this buffer visits a plain document that may be edited."
+  (and buffer-file-name
+       (not (derived-mode-p 'pdf-text-mode 'nov-mode))
+       (string-match-p my/recent-regexp buffer-file-name)))
+
+(defun my/doc-toggle-edit ()
+  "Switch the buffer between read-only and editable."
+  (interactive)
+  (read-only-mode (if buffer-read-only -1 1))
+  (force-mode-line-update))
+
+;; e and q work as commands only while the buffer is read-only;
+;; in an editable buffer the filter returns nil, so they just type letters.
+(define-minor-mode my/doc-ro-mode
+  "Reader keys for read-only documents: e = edit, q = close."
+  :lighter " RO"
+  :keymap
+  `(keymap
+    (?e menu-item "" my/doc-toggle-edit
+        :filter ,(lambda (cmd) (and buffer-read-only cmd)))
+    (?q menu-item "" my/doc-quit
+        :filter ,(lambda (cmd) (and buffer-read-only cmd)))
+    (,(kbd "C-c e") . my/doc-toggle-edit)))
+
+(defun my/doc-lock ()
+  "Open plain documents read-only."
+  (when (my/doc-edit-p)
+    (my/doc-ro-mode 1)
+    (read-only-mode 1)))
+
+;;; Touch
+
+(defun my/doc-edit-button ()
+  "Header button that shows the current state and toggles it."
+  (propertize (if buffer-read-only " ✎ Edit " " ✔ Lock ")
+              'face 'button 'mouse-face 'highlight
+              'keymap (let ((m (make-sparse-keymap)))
+                        (define-key m [header-line mouse-1]
+                                    #'my/doc-toggle-edit)
+                        m)))
+
 (defun my/doc-quit ()
   "Close the current document buffer and leave its window."
   (interactive)
@@ -174,11 +221,15 @@ directory is on its own line and still too long."
                                            #'my/recent-show)
                                m))
          "  "
+         '(:eval (when (bound-and-true-p my/doc-ro-mode)
+                   (my/doc-edit-button)))
+         "  "
          (propertize " ✕ Close " 'face 'button 'mouse-face 'highlight
                      'keymap (let ((m (make-sparse-keymap)))
                                (define-key m [header-line mouse-1]
                                            #'my/doc-quit)
                                m)))))
+
 
 (defalias 'pdf-text-quit #'my/doc-quit)
 
@@ -186,5 +237,6 @@ directory is on its own line and still too long."
 (add-hook 'nov-mode-hook #'my/touch-header)
 (add-hook 'text-mode-hook #'my/touch-header)
 (add-hook 'org-mode-hook #'my/touch-header)
+(add-hook 'find-file-hook #'my/doc-lock)
 
 (global-set-key (kbd "C-c r") #'my/recent-show)
