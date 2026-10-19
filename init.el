@@ -6,7 +6,7 @@
 ;; У :packages лише явно потрібні пакети. Залежності розгортаються автоматично.
 (defconst my/profiles
   '((base   :parent nil
-            :packages (markdown-mode highlight-symbol line-reminder imenu-list
+            :packages (markdown-mode line-reminder imenu-list
                                      yasnippet sunny-day-theme git-gutter
                                      popwin marginalia kaolin-themes)
             :rc ("editing" "screen" "rc-mouse" "rc-completion"
@@ -15,7 +15,8 @@
             :packages (nov)
             :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
-            :packages (magit elpy company company-quickhelp ahg helpful)
+            :packages (magit elpy company company-quickhelp ahg helpful
+                             highlight-symbol)
             :rc ("vcs" "rc-prog" "lisp" "tags" "rc-clang" "rc-eshell"
                  "rc-nxml" "rc-json" "rc-python" "java" "rc-completion-dev"
                  "rc-make" "rc-javascript" "auto-insert" "rc-dired"))))
