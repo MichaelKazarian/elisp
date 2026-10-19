@@ -15,7 +15,7 @@
             :packages (nov)
             :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
-            :packages (magit elpy company company-quickhelp ahg)
+            :packages (magit elpy company company-quickhelp ahg helpful)
             :rc ("vcs" "rc-prog" "lisp" "tags" "rc-clang" "rc-eshell"
                  "rc-nxml" "rc-json" "rc-python" "java" "rc-completion-dev"
                  "rc-make" "rc-javascript" "auto-insert" "rc-dired"))))
