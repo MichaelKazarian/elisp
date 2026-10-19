@@ -1,34 +1,20 @@
-;;; emacs-rc-elisp.el --- LISP-mode settings
+;;; lisp.el --- Lisp modes settings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2009 Michael Kazarian
 ;; Author: michael.kazarian@gmail.com
 ;; Status: not intended to be distributed yet
 
-(defun my-lisp-mode-hook ()
-  (setq tab-width 2
-        indent-tabs-mode nil)
-  (abbrev-mode 1)
-  (local-set-key [return] 'newline-and-indent)
-  (eldoc-mode 1) 
-  (outline-minor-mode 1)
-  (indent-guide-mode 1)
-  (yas-minor-mode))
-  ;; (display-line-numbers-mode)
-  ;; (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
-  ;; (local-set-key (kbd "<f7>") 'highlight-symbol-next-in-defun)
-  ;; (local-set-key (kbd "S-<f7>") 'highlight-symbol-prev-in-defun))
-(add-hook 'lisp-mode-hook 'my-lisp-mode-hook)
+;; Abbrev, outline, eldoc, RET indentation and tab settings already come
+;; from prog-mode, rc-prog.el and Emacs defaults.
 
+;; Common Lisp
+(add-hook 'lisp-mode-hook #'indent-guide-mode)
+(add-hook 'lisp-mode-hook #'yas-minor-mode)
 
-(defun my-emacs-lisp-mode-hook ()
-  (local-set-key (kbd "C-c C-d") 'helpful-at-point))
+;; Emacs Lisp
+(add-hook 'emacs-lisp-mode-hook #'yas-minor-mode)
+(add-hook 'emacs-lisp-mode-hook #'indent-guide-mode)
+(with-eval-after-load 'elisp-mode
+  (define-key emacs-lisp-mode-map (kbd "C-c C-d") #'helpful-at-point))
 
-(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
-;; (add-hook 'emacs-lisp-mode-hook 'highlight-symbol-mode)
-;; (add-hook 'emacs-lisp-mode-hook 'highlight-symbol-nav-mode)
-
-
-;; (add-hook 'slime-mode-hook  '(lambda()  
-;; (define-key slime-mode-map "\r" 'newline-and-indent)))
-
-;;; emacs-rc-elisp.el ends here
+;;; lisp.el ends here
