@@ -3,26 +3,19 @@
 (add-to-list 'load-path "~/elisp/mode")
 (add-to-list 'load-path "~/elisp/rc")
 
+;; У :packages лише явно потрібні пакети. Залежності розгортаються автоматично.
 (defconst my/profiles
   '((base   :parent nil
-            :packages (compat mkdown markdown-preview-mode markdown-preview-eww
-                              highlight-symbol auto-highlight-symbol highlight-thing
-                              line-reminder imenu-list yasnippet yasnippet-snippets
-                              doom-modeline sunny-day-theme
-                              git-gutter fringe-helper
-                              dash s ht ov compat popwin marginalia)
+            :packages (markdown-mode highlight-symbol line-reminder imenu-list
+                                     yasnippet sunny-day-theme git-gutter
+                                     popwin marginalia)
             :rc ("editing" "screen" "rc-mouse" "rc-completion"
                  "markdown" "rc-org" "backup" "savehistory" "kbd"))
     (reader :parent base
-            :packages (nov esxml)
+            :packages (nov)
             :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
-            :packages (transient magit magit-section with-editor llama cond-let
-                             elpy pyvenv highlight-indentation
-                             highlight-function-calls
-                             posframe pos-tip
-                             company company-quickhelp company-quickhelp-terminal
-                             eproject aproject projector isearch-project vmd-mode ahg)
+            :packages (magit elpy company company-quickhelp ahg)
             :rc ("vcs" "rc-prog" "lisp" "tags" "rc-clang" "rc-eshell"
                  "rc-nxml" "rc-json" "rc-python" "java"
                  "rc-make" "rc-javascript" "auto-insert" "rc-dired"))))
@@ -40,12 +33,28 @@ Values from parent profiles come first, followed by those of the child."
          (mapcar (lambda (p) (plist-get (alist-get p my/profiles) key))
                  (my/profile-chain my/profile))))
 
-;; Packages: activate only those needed by the profile
+(defun my/package-closure (roots)
+  "Return ROOTS plus all their transitive dependencies from `package-alist'."
+  (let ((seen nil) (queue (copy-sequence roots)))
+    (while queue
+      (let ((name (pop queue)))
+        (unless (memq name seen)
+          (push name seen)
+          (if-let ((desc (cadr (assq name package-alist))))
+              (dolist (req (package-desc-reqs desc))
+                (push (car req) queue))
+            (unless (or (eq name 'emacs) (package-built-in-p name))
+              (message "Package %s is not installed" name))))))
+    seen))
+
+;; Packages: activate only the profile's packages and their dependencies
 (setq package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
+(package-initialize t)                  ; only read descriptors, no activation
 (setq package-load-list
-      (mapcar (lambda (p) (list p t)) (my/profile-collect :packages)))
-(package-initialize)
+      (mapcar (lambda (p) (list p t))
+              (my/package-closure (my/profile-collect :packages))))
+(package-activate-all)
 
 (setq custom-file (expand-file-name
                    (format "custom-%s.el" my/profile) user-emacs-directory))
@@ -59,3 +68,11 @@ Values from parent profiles come first, followed by those of the child."
     (error (message "RC %s FAILED: %S" f err))))
 
 (when (file-exists-p custom-file) (load custom-file nil t))
+
+;; For `package-autoremove': the union of packages of ALL profiles,
+;; so cleaning from one profile does not remove another profile's packages.
+(setq package-selected-packages
+      (delete-dups
+       (apply #'append
+              (mapcar (lambda (p) (copy-sequence (plist-get (cdr p) :packages)))
+                      my/profiles))))
