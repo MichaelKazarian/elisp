@@ -1,59 +1,39 @@
-;;; emacs-rc-screen.el ---
-
-;;; General screen settings
+;;; screen.el --- General screen settings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2009 Michael Kazarian
 ;; Author: michael.kazarian@gmail.com
 ;; Status: not intended to be distributed yet
 
-(setq inhibit-startup-message t);;Загружаемся молча
-(setq column-number-mode t)
-;;Line numbering
-(setq line-number-mode t)
+(setq inhibit-startup-message t
+      scroll-conservatively 101         ; never recenter when scrolling
+      scroll-preserve-screen-position t
+      scroll-margin 1
+      mouse-yank-at-point t ;middle-click pastes at cursor, not at click position
+      display-time-string-forms '((format-time-string "%b.%d,%a %H:%M")))
 
-;;Scroll
-(setq scroll-conservatively 10000)
-(setq scroll-preserve-screen-position 't)
-(setq scroll-margin 1)
-(global-set-key [vertical-scroll-bar down-mouse-1] 'scroll-bar-drag)
+(column-number-mode 1)
+(display-time-mode 1)
+(blink-cursor-mode -1)
+(tool-bar-mode -1)
 
-;; hour format
-(setq display-time-string-forms
-      '((format-time-string "%b.%d,%a %H:%M")))
-(display-time-mode t)
+;;; Theme
+(let ((host (system-name)))
+  (cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
+        ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm"))
+         (load-theme 'kaolin-mono-light t))
+        ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
+        (t (load-theme 'sunny-day t))))
 
-;; Paste at point NOT at cursor
-(setq mouse-yank-at-point 't)
-(mouse-wheel-mode 1) ;mouse scroll
-(blink-cursor-mode nil) ; Blinking cursors 
+;;; Font
+(let ((font (cond ((eq system-type 'gnu/linux) "Fira Code-16")
+                  ((eq system-type 'android) "Fira Code-14") ;; monospace-14 default font
+                  ((eq system-type 'darwin)  "Inconsolata LGC-16")
+                  (t "Consolas-12"))))
+  (add-to-list 'default-frame-alist (cons 'font font)) ; new frames
+  (when (display-graphic-p)
+    (set-frame-font font nil t)))                      ; current frame
 
-;; Shut off message buffer. Note - if you need to debug emacs, comment these out so you can see what's going on.
-(setq message-log-max t);;0 - FOR SLIME elsi nil
-
-;;(menu-bar-mode -1)
-(tool-bar-mode -1);;Emacs 23
-;(set-default 'truncate-lines t) ;;Long lines not trunkate
-
-;; Color theme
-(setq host (system-name))
-(cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
-      ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm")) (load-theme 'kaolin-mono-light t))
-      ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
-      (t (load-theme 'sunny-day t)))
-
-;;Font
-(require 'font-lock)
-(cond ((equal system-type 'gnu/linux) (set-frame-font "Fira Code-16" nil t))
-      ;((equal system-type 'android) (set-frame-font "monospace-14" nil t)) ;; Android system font
-      ((equal system-type 'android) (set-frame-font "Fira Code-14" nil t))
-      ((equal system-type 'darwin) (set-frame-font "Inconsolata LGC-16" nil t))
-      (t (set-frame-font "Consolas-12" nil t)))
-
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
-(setq unibyte-display-via-language-environment t)
-
-;; Add behaviour like ECB compilation window
+;;; Popup windows (ECB-like compilation window)
 (require 'popwin)
 (popwin-mode 1)
 
@@ -62,18 +42,17 @@
         ("*Messages*" :position bottom :height 10 :stick t)
         ("*compilation*" :position bottom :height 15 :stick t :regexp t)
         ("*eshell*" :position bottom :height 15 :stick t)
-        ("^\\*helpful.*" :position right :width 0.4 :stick t :regexp t)
-        ))
+        ("^\\*helpful.*" :position right :width 0.4 :stick t :regexp t)))
 
-(defvar my-window-max-height 25
-  "Height of the window when it is active.")
+(defvar my/window-max-height 25
+  "Height of a bottom popup window when it is active.")
 
-(defvar my-window-min-height 10
-  "Minimum height of the window when it is not active.")
+(defvar my/window-min-height 10
+  "Height of a bottom popup window when it is not active.")
 
-(defun my-adjust-popwin-windows ()
-   "Minimum height of the window when it is not active."
-  (when (cdr (window-list))             ; більше одного вікна
+(defun my/adjust-popwin-windows (&optional _frame)
+  "Enlarge the selected bottom popup window and shrink the other ones."
+  (when (cdr (window-list))             ; more than one window
     (let ((active (selected-window)))
       (dolist (win (window-list))
         (let* ((buf (window-buffer win))
@@ -85,10 +64,9 @@
             (ignore-errors
               (with-selected-window win
                 (if (eq win active)
-                    (enlarge-window (- my-window-max-height (window-height)))
-                  (shrink-window (- (window-height) my-window-min-height)))))))))))
+                    (enlarge-window (- my/window-max-height (window-height)))
+                  (shrink-window (- (window-height) my/window-min-height)))))))))))
 
-(add-hook 'window-selection-change-functions
-          (lambda (_) (my-adjust-popwin-windows)))
+(add-hook 'window-selection-change-functions #'my/adjust-popwin-windows)
 
-;;; emacs-rc-screen.el ends here
+;;; screen.el ends here

@@ -8,7 +8,7 @@
   '((base   :parent nil
             :packages (markdown-mode highlight-symbol line-reminder imenu-list
                                      yasnippet sunny-day-theme git-gutter
-                                     popwin marginalia)
+                                     popwin marginalia kaolin-themes)
             :rc ("editing" "screen" "rc-mouse" "rc-completion"
                  "markdown" "rc-org" "backup" "savehistory" "kbd"))
     (reader :parent base
