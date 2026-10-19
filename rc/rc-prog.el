@@ -1,13 +1,12 @@
-;;; rc-prog.el --- 
+;;; rc-prog.el --- Programming settings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) Michael Kazarian
-;;
 ;; Author: Michael Kazarian <michael.kazarian@gmail.com>
-;; Keywords: 
-;; Requirements: 
 ;; Status: not intended to be distributed yet
 
-(setq tags-candidate '("."))
+;;; Tags
+(defvar tags-candidate '(".")
+  "Directories searched for source files when building tags.")
 
 (defun find-dirs-str ()
   "Returns tags-candidate prepared to find command"
@@ -15,86 +14,51 @@
     (dolist (element tags-candidate value)
       (setq value (concat element " " value)))))
 
-(defun my-prog-mode-hook ()
-  (setq tab-width 2
-        indent-tabs-mode nil)
-  (abbrev-mode 1)
-  (set 'ecb-layout-name "left15")
-  (electric-pair-mode)
-  (outline-minor-mode 1)
-  (display-line-numbers-mode 1)
-  (highlight-symbol-mode 1) ;; Perhaps highlight-thing.el will better?
-  (highlight-symbol-nav-mode 1)
-  ;; (setq compilation-scroll-output t) ;; Compilation buffer auto scrol
-  (setq compilation-scroll-output 'first-error) ;; scroll to the first error
-  (local-set-key (kbd "\e\em") 'company-complete)
-  (local-set-key (kbd "C-;") 'comment-or-uncomment-region)
-  (local-set-key (kbd "<f7>") 'highlight-symbol-next-in-defun)
-  (local-set-key (kbd "S-<f7>") 'highlight-symbol-prev-in-defun)
-  ;; git-guttre keys
-  (local-set-key (kbd "\e\eg=") 'git-gutter:popup-hunk)
-  (local-set-key (kbd "\e\egs") 'git-gutter:stage-hunk)
-  (local-set-key (kbd "\e\egr") 'git-gutter:revert-hunk))
+;;; prog-mode
+(setq compilation-scroll-output 'first-error) ; scroll to the first error
+(electric-pair-mode 1)
 
-(add-hook 'prog-mode-hook 'my-prog-mode-hook)
+(dolist (fn '(abbrev-mode
+              outline-minor-mode
+              display-line-numbers-mode
+              highlight-symbol-mode
+              highlight-symbol-nav-mode))
+  (add-hook 'prog-mode-hook fn))
 
+(define-key prog-mode-map (kbd "C-;")    #'comment-or-uncomment-region)
+(define-key prog-mode-map (kbd "<f7>")   #'highlight-symbol-next-in-defun)
+(define-key prog-mode-map (kbd "S-<f7>") #'highlight-symbol-prev-in-defun)
 
-;;; Highlight indentation
+;;; Highlight current line
+(with-eval-after-load 'hl-line
+  (set-face-attribute 'hl-line nil :underline nil))
+(dolist (hook '(dired-mode-hook package-menu-mode-hook
+                Buffer-menu-mode-hook ibuffer-mode-hook))
+  (add-hook hook #'hl-line-mode))
 
-;; highlight-indentation-mode colors
-(add-hook 'highlight-indentation-mode-hook
-          (lambda ()
-            ;; (set-face-background 'highlight-indentation-face "gray80")
-            ;; (set-face-background 'highlight-indentation-current-column-face "gray80")
-            ;; (set-face-background 'highlight-indentation-face "Khaki2")
-            ;; (set-face-background 'highlight-indentation-current-column-face "Khaki3")
-            ))
+;;; Whitespace (toggle by hand with M-x whitespace-mode)
+(with-eval-after-load 'whitespace
+  (setq whitespace-silent t
+        whitespace-style '(spaces tabs newline space-mark tab-mark face)
+        ;; numbers are Unicode codepoints in decimal
+        whitespace-display-mappings
+        '((space-mark 32 [183] [46])    ; SPACE -> MIDDLE DOT, FULL STOP
+          (newline-mark 10 [182 10])    ; LINE FEED -> PILCROW
+          (tab-mark 9 [9655 9] [92 9]))) ; TAB -> WHITE RIGHT-POINTING TRIANGLE
+  (set-face-attribute 'whitespace-space nil
+                      :background 'unspecified :foreground "gray70"))
 
-;; Highlight currentline settings
-(require 'hl-line)
-;; (set-face-background 'hl-line "LightGoldenrod2")
-;; (set-face-background 'hl-line "SlateBlue4")
-(set-face-attribute hl-line-face nil :underline nil)
-;(set-face-background 'hl-line "only line")
-(add-hook 'dired-mode-hook 'hl-line-mode)
-(add-hook 'package-menu-mode-hook 'hl-line-mode)
-(add-hook 'buffer-menu-mode-hook 'hl-line-mode)
-(add-hook 'ibuffer-mode-hook 'hl-line-mode)
-
-;; Whitespace settings
-(whitespace-mode 1)
-(setq whitespace-global-mode nil)
-(setq whitespace-silent t)
-(setq whitespace-modes (quote (awk-mode)))
-(setq whitespace-style '(spaces tabs newline space-mark tab-mark face))
-(set-face-attribute 'whitespace-space nil :background 'unspecified :foreground "gray70")
-
-(setq whitespace-display-mappings
-  ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
-  '(
-    (space-mark 32 [183] [46]) ; 32 SPACE 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-    (newline-mark 10 [182 10]) ; 10 LINE FEED
-    (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
-    ))
-
-;;; Add markers to the fringe for regions foldable by hideshow.el
+;;; Fold markers in the fringe (graphical frames only)
 (autoload 'hideshowvis-enable "hideshowvis" "Highlight foldable regions")
-
-(autoload 'hideshowvis-minor-mode
-  "hideshowvis"
+(autoload 'hideshowvis-minor-mode "hideshowvis"
   "Will indicate regions foldable with hideshow in the fringe."
   'interactive)
 
-(dolist (hook (list 'emacs-lisp-mode-hook
-                    'java-mode-hook
-                    'python-mode-hook
-                    'c-mode-hook))
-  (add-hook hook 'hideshowvis-enable))
-;;;
+(dolist (hook '(emacs-lisp-mode-hook java-mode-hook
+                python-mode-hook c-mode-hook))
+  (add-hook hook #'hideshowvis-enable))
 
-(setq w3m-default-display-inline-images t) ;; w3m show pictures
-
-;; https://github.com/bmag/imenu-list
+;;; imenu-list  https://github.com/bmag/imenu-list
 (setq imenu-list-position 'left)
 (global-set-key (kbd "\e\el") #'imenu-list-smart-toggle)
 
