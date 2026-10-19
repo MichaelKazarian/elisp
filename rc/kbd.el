@@ -1,44 +1,43 @@
-;;; emacs-rc-kbd.el --- Editing key bindings
+;;; kbd.el --- Key bindings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2009 Michael Kazarian
 ;; Author: michael.kazarian@gmail.com
 ;; Status: not intended to be distributed yet
 
-(global-set-key "\C-cg" 'goto-line)
-(global-set-key "\C-z" 'undo)
-(global-set-key (kbd"M-z") 'redo)
-(global-set-key [f2] 'save-buffer)
-(global-set-key [C-f2] 'write-file)
-(global-set-key [f12] 'dabbrev-completion)
-(global-set-key [C-f12] 'dabbrev-expand)
-(global-set-key [f9] 'compile)
-(global-set-key [C-f10] 'menu-bar-mode)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(global-set-key (kbd"C-=") 'hs-show-block)
-(global-set-key (kbd"C--") 'hs-hide-block)
-(global-set-key (kbd"C-0") 'hs-show-all)
-(global-set-key (kbd"C-9") 'hs-hide-all)
-;; Cyrillic keys
-(global-set-key [?\C-ч ?\C-ы] 'save-buffer)     ; C-x C-s
-(global-set-key [?\C-ч ?\C-і] 'save-buffer)     ; C-x C-s
-(global-set-key [?\C-ч ?\C-и] 'ibuffer)         ; C-x C-b
-(global-set-key [?\C-ч ?\и] 'iswitchb-buffer)   ; C-x b
-(global-set-key [?\C-ч ?\щ] 'other-window)      ; C-x o
-(global-set-key [?\C-я] 'undo) ;C-z
-(global-set-key [?\M-я] 'redo) ;M-z
-(global-set-key [?\C-п] 'keyboard-quit)   ; C-g
-(global-set-key [?\C-і] 'isearch-forward) ;C-s
-(global-set-key [?\C-ы] 'isearch-forward) ;C-s
-(global-set-key [?\C-к] 'isearch-backward) ;C-r
-(global-set-key [?\M-ц] 'kill-ring-save) ; M-w
-(global-set-key [?\C-ц] 'kill-region)      ; C-w
-(global-set-key [?\C-н] 'yank)      ; C-y
-(global-set-key [?\C-е] 'move-end-of-line)      ; C-e
-(global-set-key [?\C-ф] 'move-beginning-of-line)        ; C-a
-(global-set-key [?\C-и] 'backward-char)     ; C-b
-(global-set-key [?\C-а] 'forward-char) ; C-
-(global-set-key [?\M-ф] 'forward-word) ;M-a
-(global-set-key [?\M-и] 'backward-word) ;M-e
-(global-set-key [?\C-л] 'kill-line)     ; C-k
+;;; Global bindings
+(global-set-key (kbd "C-c g") #'goto-line)
+(global-set-key (kbd "C-z")   #'undo-only)
+(global-set-key (kbd "M-z")   #'undo-redo)   ; Emacs 28+, replaces redo.el
+(global-set-key (kbd "<f2>")   #'save-buffer)
+(global-set-key (kbd "C-<f2>") #'write-file)
+(global-set-key (kbd "<f9>")   #'compile)
+(global-set-key (kbd "C-<f10>") #'menu-bar-mode)
+(global-set-key (kbd "<f12>")   #'dabbrev-completion)
+(global-set-key (kbd "C-<f12>") #'dabbrev-expand)
+(global-set-key (kbd "C-x C-b") #'ibuffer)
 
-;;; emacs-rc-kbd.el ends here
+;;; Hideshow: only where hs-minor-mode is active, so that C--, C-0 and C-9
+;;; keep working as numeric prefix arguments everywhere else.
+(with-eval-after-load 'hideshow
+  (define-key hs-minor-mode-map (kbd "C-=") #'hs-show-block)
+  (define-key hs-minor-mode-map (kbd "C--") #'hs-hide-block)
+  (define-key hs-minor-mode-map (kbd "C-0") #'hs-show-all)
+  (define-key hs-minor-mode-map (kbd "C-9") #'hs-hide-all))
+
+;;; Cyrillic layout: C-/M-/C-M- chords are translated to their Latin
+;;; equivalents (C-ч C-ы -> C-x C-s, M-ц -> M-w, ...), so every command
+;;; works without binding it twice.  Plain letters are untouched, so typing
+;;; Cyrillic text is not affected.
+(let ((cyr "йцукенгшщзфывапролдячсмитьі")
+      (lat "qwertyuiopasdfghjklzxcvbnms"))
+  (dotimes (i (length cyr))
+    (dolist (mods '((control) (meta) (control meta)))
+      (define-key key-translation-map
+                  (vector (event-convert-list (append mods (list (aref cyr i)))))
+                  (vector (event-convert-list (append mods (list (aref lat i)))))))))
+
+;; Plain letters after C-x (C-x b, C-x o)
+(define-key ctl-x-map (kbd "и") #'ido-switch-buffer)
+(define-key ctl-x-map (kbd "щ") #'other-window)
+
+;;; kbd.el ends here
