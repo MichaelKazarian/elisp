@@ -17,7 +17,7 @@
     (dev    :parent base
             :packages (magit elpy company company-quickhelp ahg)
             :rc ("vcs" "rc-prog" "lisp" "tags" "rc-clang" "rc-eshell"
-                 "rc-nxml" "rc-json" "rc-python" "java"
+                 "rc-nxml" "rc-json" "rc-python" "java" "rc-completion-dev"
                  "rc-make" "rc-javascript" "auto-insert" "rc-dired"))))
 
 (defun my/profile-chain (profile)
