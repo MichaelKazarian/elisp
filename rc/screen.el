@@ -22,10 +22,10 @@
         ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm"))
          (load-theme 'kaolin-mono-light t))
         ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
-        (t (load-theme 'sunny-day t))))
+        (t (load-theme 'tango t))))
 
 ;;; Font
-(let ((font (cond ((eq system-type 'gnu/linux) "Fira Code-16")
+(let ((font (cond ((eq system-type 'gnu/linux) "Fira Code-13")
                   ((eq system-type 'android) "Fira Code-14") ;; monospace-14 default font
                   ((eq system-type 'darwin)  "Inconsolata LGC-16")
                   (t "Consolas-12"))))
