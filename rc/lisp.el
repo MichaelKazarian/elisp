@@ -4,14 +4,13 @@
 ;; Author: michael.kazarian@gmail.com
 ;; Status: not intended to be distributed yet
 
-;; Abbrev, outline, eldoc, RET indentation and tab settings already come
-;; from prog-mode, rc-prog.el and Emacs defaults.
+(add-to-list 'auto-mode-alist
+             '("\\.dir-locals\\(-2\\)?\\.el\\'" . emacs-lisp-mode))
 
-;; Common Lisp
-(add-hook 'lisp-mode-hook #'indent-guide-mode)
+;; Indentation guides for all Lisp modes.
+(add-hook 'lisp-data-mode-hook #'indent-guide-mode)
 
-;; Emacs Lisp
-(add-hook 'emacs-lisp-mode-hook #'indent-guide-mode)
+;; Helpful for Emacs Lisp, including .dir-locals.el and *scratch*.
 (with-eval-after-load 'elisp-mode
   (define-key emacs-lisp-mode-map (kbd "C-c C-d") #'helpful-at-point))
 
