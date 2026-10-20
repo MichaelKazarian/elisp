@@ -24,7 +24,7 @@
   ;; (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-enable-current-element-highlight t)
   (set (make-local-variable 'company-backends)
-       '(company-css company-web-html company-yasnippet company-files))
+       '(company-css company-web-html company-files))
   (emmet-mode 1)
   (local-set-key (kbd "RET") 'newline-and-indent)
   (local-set-key (kbd "C-;") 'comment-or-uncomment-region)

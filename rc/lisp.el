@@ -9,10 +9,8 @@
 
 ;; Common Lisp
 (add-hook 'lisp-mode-hook #'indent-guide-mode)
-(add-hook 'lisp-mode-hook #'yas-minor-mode)
 
 ;; Emacs Lisp
-(add-hook 'emacs-lisp-mode-hook #'yas-minor-mode)
 (add-hook 'emacs-lisp-mode-hook #'indent-guide-mode)
 (with-eval-after-load 'elisp-mode
   (define-key emacs-lisp-mode-map (kbd "C-c C-d") #'helpful-at-point))
