@@ -25,8 +25,8 @@
 
 ;;; Emacs 30+ (guarded, so the same config still loads on older Emacs)
 (when (>= emacs-major-version 30)
-  (setq completions-sort 'historical          ; recently used candidates first
-        minibuffer-visible-completions t      ; up/down/RET work on the visible list
+  (setq completions-sort 'alphabetical      ; Use 'historical for recent-first.
+        minibuffer-visible-completions t    ; up/down/RET work on the visible list
         completion-preview-minimum-symbol-length 2)
   (add-hook 'prog-mode-hook #'completion-preview-mode)) ; ghost text, TAB accepts
 
