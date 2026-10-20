@@ -50,11 +50,13 @@ Values from parent profiles come first, followed by those of the child."
 ;; Packages: activate only the profile's packages and their dependencies
 (setq package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
+
 (package-initialize t)                  ; only read descriptors, no activation
-(setq package-load-list
-      (mapcar (lambda (p) (list p t))
-              (my/package-closure (my/profile-collect :packages))))
-(package-activate-all)
+
+;; Activate profile packages and dependencies selectively to avoid marking
+;; packages as incompatible
+(mapc #'package-activate
+      (my/package-closure (my/profile-collect :packages)))
 
 (setq custom-file (expand-file-name
                    (format "custom-%s.el" my/profile) user-emacs-directory))
