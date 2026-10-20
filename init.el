@@ -40,7 +40,7 @@ Values from parent profiles come first, followed by those of the child."
       (let ((name (pop queue)))
         (unless (memq name seen)
           (push name seen)
-          (if-let ((desc (cadr (assq name package-alist))))
+          (if-let* ((desc (cadr (assq name package-alist))))
               (dolist (req (package-desc-reqs desc))
                 (push (car req) queue))
             (unless (or (eq name 'emacs) (package-built-in-p name))
