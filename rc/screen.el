@@ -20,7 +20,7 @@
 (let ((host (system-name)))
   (cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
         ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm"))
-         (load-theme 'kaolin-mono-light t))
+         (load-theme 'modus-operandi-tinted t))
         ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
         (t (load-theme 'tango t))))
 
