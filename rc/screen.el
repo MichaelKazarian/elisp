@@ -18,11 +18,11 @@
 
 ;;; Theme
 (let ((host (system-name)))
-  (cond ((not (display-graphic-p)) (load-theme 'tango-dark t))
-        ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm"))
-         (load-theme 'modus-operandi-tinted t))
+  (cond ((not (display-graphic-p)) (load-theme 'modus-vivendi t))
+        ;; ((member host '("asm-3" "rpi5-mk" "rpzero2" "srvvm"))
+        ;;  (load-theme 'tango t))
         ((equal host "mac-asm3.local") (load-theme 'kaolin-breeze t))
-        (t (load-theme 'tango t))))
+        (t (load-theme 'modus-operandi-tinted t))))
 
 ;;; Font
 (let ((font (cond ((eq system-type 'gnu/linux) "Fira Code-13")
