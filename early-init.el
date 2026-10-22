@@ -1,4 +1,10 @@
 ;; -*- lexical-binding: t; -*-
+
+;; Disable native compilation of Emacs Lisp.
+;; (setq native-comp-speed 0)
+;; (setq native-comp-jit-compilation nil)
+;; (setq native-comp-deferred-compilation nil)
+
 (defvar my/profile (intern (or (getenv "EMACS_PROFILE") "reader")))
 
 ;; Автоматичний package-initialize вимикаємо: викличемо його самі,
