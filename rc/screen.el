@@ -33,40 +33,43 @@
   (when (display-graphic-p)
     (set-frame-font font nil t)))                      ; current frame
 
-;;; Popup windows (ECB-like compilation window)
-(require 'popwin)
-(popwin-mode 1)
+;; ;;; Popup windows (ECB-like compilation window)
+;; Popwin was disabled because its custom compilation-window handling
+;; conflicted with ECB's window management.
 
-(setq popwin:special-display-config
-      '(("*Help*" :position right :width 40 :stick t)
-        ("*Messages*" :position bottom :height 10 :stick t)
-        ("*compilation*" :position bottom :height 15 :stick t :regexp t)
-        ("*eshell*" :position bottom :height 15 :stick t)
-        ("^\\*helpful.*" :position right :width 0.4 :stick t :regexp t)))
+;; (require 'popwin)
+;; (popwin-mode 1)
 
-(defvar my/window-max-height 25
-  "Height of a bottom popup window when it is active.")
+;; (setq popwin:special-display-config
+;;       '(("*Help*" :position right :width 40 :stick t)
+;;         ("*Messages*" :position bottom :height 10 :stick t)
+;;         ("*compilation*" :position bottom :height 15 :stick t :regexp t)
+;;         ("*eshell*" :position bottom :height 15 :stick t)
+;;         ("^\\*helpful.*" :position right :width 0.4 :stick t :regexp t)))
 
-(defvar my/window-min-height 10
-  "Height of a bottom popup window when it is not active.")
+;; (defvar my/window-max-height 25
+;;   "Height of a bottom popup window when it is active.")
 
-(defun my/adjust-popwin-windows (&optional _frame)
-  "Enlarge the selected bottom popup window and shrink the other ones."
-  (when (cdr (window-list))             ; more than one window
-    (let ((active (selected-window)))
-      (dolist (win (window-list))
-        (let* ((buf (window-buffer win))
-               (config (and buf (cdr (assoc (buffer-name buf)
-                                            popwin:special-display-config)))))
-          (when (and config
-                     (eq (plist-get config :position) 'bottom)
-                     (not (eq win (frame-root-window))))
-            (ignore-errors
-              (with-selected-window win
-                (if (eq win active)
-                    (enlarge-window (- my/window-max-height (window-height)))
-                  (shrink-window (- (window-height) my/window-min-height)))))))))))
+;; (defvar my/window-min-height 10
+;;   "Height of a bottom popup window when it is not active.")
 
-(add-hook 'window-selection-change-functions #'my/adjust-popwin-windows)
+;; (defun my/adjust-popwin-windows (&optional _frame)
+;;   "Enlarge the selected bottom popup window and shrink the other ones."
+;;   (when (cdr (window-list))             ; more than one window
+;;     (let ((active (selected-window)))
+;;       (dolist (win (window-list))
+;;         (let* ((buf (window-buffer win))
+;;                (config (and buf (cdr (assoc (buffer-name buf)
+;;                                             popwin:special-display-config)))))
+;;           (when (and config
+;;                      (eq (plist-get config :position) 'bottom)
+;;                      (not (eq win (frame-root-window))))
+;;             (ignore-errors
+;;               (with-selected-window win
+;;                 (if (eq win active)
+;;                     (enlarge-window (- my/window-max-height (window-height)))
+;;                   (shrink-window (- (window-height) my/window-min-height)))))))))))
+
+;; (add-hook 'window-selection-change-functions #'my/adjust-popwin-windows)
 
 ;;; screen.el ends here

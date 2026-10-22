@@ -6,7 +6,7 @@
 ;; У :packages лише явно потрібні пакети. Залежності розгортаються автоматично.
 (defconst my/profiles
   '((base   :parent nil
-            :packages (markdown-mode sunny-day-theme git-gutter popwin
+            :packages (markdown-mode sunny-day-theme git-gutter ;popwin
                                      marginalia kaolin-themes)
             :rc ("editing" "screen" "rc-mouse" "rc-completion"
                  "markdown" "rc-org" "backup" "savehistory" "kbd"))
@@ -15,10 +15,11 @@
             :rc ("rc-nov" "rc-pdf-text" "rc-reader"))
     (dev    :parent base
             :packages (magit elpy company company-quickhelp ahg helpful go-mode
-                             highlight-symbol imenu-list indent-guide)
-            :rc ("vcs" "rc-prog" "lisp" "tags" "rc-clang" "rc-eshell"
+                             highlight-symbol imenu-list indent-guide ecb)
+            :rc ("vcs" "rc-prog" "lisp" "rc-clang" "rc-eshell" ;"tags"
                  "rc-nxml" "rc-json" "rc-python" "java" "rc-completion-dev"
-                 "rc-make" "rc-javascript" "auto-insert" "rc-dired"))))
+                 "rc-make" "rc-javascript" "auto-insert" "rc-dired"
+                 "rc-cedet" "rc-ecb"))))
 
 (defun my/profile-chain (profile)
   "Return the list of profiles from the root ancestor down to PROFILE.
