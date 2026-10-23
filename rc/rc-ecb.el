@@ -7,6 +7,9 @@
 (require 'ecb-autoloads)
 
 (defun ecb-display-buffer-at-bottom-around (orig-fun &rest args)
+"Work around ECB window handling issues (originally in Emacs 27).
+Use display-buffer-use-some-window' instead of
+display-buffer-at-bottom' when displaying buffers in the ECB frame."
   (if (and (bound-and-true-p ecb-minor-mode)
            (bound-and-true-p ecb-frame)
            (equal (selected-frame) ecb-frame))
