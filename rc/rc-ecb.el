@@ -43,7 +43,7 @@
 
 ;; Compilation window.
 (setq ecb-compile-window-height 12
-      ecb-compile-window-temporally-enlarge 'after-selectionq
+      ecb-compile-window-temporally-enlarge 'after-selection
       ecb-compile-window-width 'edit-window)
 
 ;; Buffers displayed in ECB's compilation window.
