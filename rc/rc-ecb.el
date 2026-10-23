@@ -7,8 +7,8 @@
 (require 'ecb-autoloads)
 
 (defun ecb-display-buffer-at-bottom-around (orig-fun &rest args)
-  "Work around ECB frame handling of `display-buffer-at-bottom'."
-  (if (and ecb-minor-mode
+  (if (and (bound-and-true-p ecb-minor-mode)
+           (bound-and-true-p ecb-frame)
            (equal (selected-frame) ecb-frame))
       (apply #'display-buffer-use-some-window args)
     (apply orig-fun args)))
@@ -43,7 +43,7 @@
 
 ;; Compilation window.
 (setq ecb-compile-window-height 12
-      ecb-compile-window-temporally-enlarge 'after-selection
+      ecb-compile-window-temporally-enlarge 'after-selectionq
       ecb-compile-window-width 'edit-window)
 
 ;; Buffers displayed in ECB's compilation window.
