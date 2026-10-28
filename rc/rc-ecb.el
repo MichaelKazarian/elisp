@@ -34,6 +34,7 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
       ecb-directories-menu-user-extension-function nil
       ecb-gzip-setup 'cons
       ecb-history-menu-user-extension-function nil
+      ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1
       ecb-layout-name "left14"
       ecb-methods-menu-user-extension-function nil
       ecb-prescan-directories-for-emptyness nil
