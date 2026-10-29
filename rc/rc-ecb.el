@@ -60,4 +60,37 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
         ("*Compile-log*" . nil)
         ("*Messages*" . nil)))
 
+;; --- ECB non semantic ---
+(defun my-ecb-expand-non-semantic-methods (&rest _)
+  "Expand all nodes in ECB Methods for non-semantic files."
+  (when (and (featurep 'ecb)
+             (get-buffer ecb-methods-buffer-name)
+             (not (ecb-methods-get-data-store
+                   'semantic-symbol->name-assoc-list)))
+    (ecb-expand-methods-node-internal
+     (with-current-buffer ecb-methods-buffer-name
+       (tree-buffer-get-root))
+     1 t nil t)))
+
+(defun my-ecb-update-methods-buffer (&rest _)
+  "Expand non-semantic Methods after updating."
+  (run-at-time 0 nil #'my-ecb-expand-non-semantic-methods))
+
+(with-eval-after-load 'ecb-method-browser
+  (advice-add 'ecb-update-methods-buffer--internal
+              :after #'my-ecb-update-methods-buffer))
+
+;; (advice-add 'semantic-active-p :override (lambda (&rest _args) nil))
+
+(setq ecb-process-non-semantic-files t)
+(setq speedbar-use-imenu-flag t)
+
+(setq ecb-non-semantic-parsing-function
+      '((python-mode . speedbar-fetch-dynamic-imenu)
+        (go-mode   . speedbar-fetch-dynamic-imenu)
+        (go-ts-mode     . speedbar-fetch-dynamic-imenu)))
+
+;; Авто-оновлення imenu
+(setq imenu-auto-rescan t)
+
 ;;; emacs-rc-ecb.el ends here
