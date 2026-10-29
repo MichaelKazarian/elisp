@@ -1,4 +1,4 @@
-;;; emacs-rc-ecb.el --- Emacs Code Browser settings
+;;; emacs-rc-ecb.el --- Emacs Code Browser settings -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2009 Michael Kazarian
 ;; Author: michael.kazarian@gmail.com
