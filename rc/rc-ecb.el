@@ -94,3 +94,51 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
 (setq imenu-auto-rescan t)
 
 ;;; emacs-rc-ecb.el ends here
+(defun my-ecb-find-tag-at-or-before (node position)
+  "Find the nearest preceding tag in NODE."
+  (let ((best-tag nil)
+        (best-position -1))
+    (dolist (child (tree-node->children node))
+      (let* ((tag (tree-node->data child))
+             (start (and (semantic-tag-p tag)
+                         (semantic-tag-start tag))))
+        (when (and (markerp start)
+                   (<= (marker-position start) position)
+                   (> (marker-position start) best-position))
+          (setq best-tag tag
+                best-position (marker-position start)))))
+    best-tag))
+
+(defun my-ecb-highlight-imenu-function (&rest _)
+  "Highlight the nearest preceding Imenu function in ECB Methods."
+  (when (and (featurep 'ecb)
+             (buffer-file-name)
+             (boundp 'ecb-methods-buffer-name)
+             (get-buffer ecb-methods-buffer-name)
+             (not (ecb-methods-get-data-store
+                   'semantic-symbol->name-assoc-list)))
+    (let ((source-buffer (current-buffer))
+          (position (point)))
+      (with-current-buffer ecb-methods-buffer-name
+        (let* ((root (tree-buffer-get-root))
+               (func-node
+                (seq-find
+                 (lambda (node)
+                   (equal (substring-no-properties
+                           (tree-node->name node))
+                          "func"))
+                 (tree-node->children root)))
+               (tag (and func-node
+                         (my-ecb-find-tag-at-or-before
+                          func-node
+                          (with-current-buffer source-buffer
+                            position)))))
+          (if tag
+              (tree-buffer-highlight-node-by-data/name tag)
+            (tree-buffer-highlight-node-by-data/name nil)))))))
+
+(with-eval-after-load 'ecb-method-browser
+  (advice-add 'ecb-tag-sync
+              :after
+              #'my-ecb-highlight-imenu-function))
+
