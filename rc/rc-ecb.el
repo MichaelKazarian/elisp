@@ -94,25 +94,28 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
 (setq imenu-auto-rescan t)
 
 (defun my-ecb-find-tag-at-or-before (node position)
-  "Find the nearest preceding tag among NODE's children."
+  "Find the nearest preceding Speedbar tag in NODE."
   (let ((best-tag nil)
         (best-position -1))
-    (dolist (child (tree-node->children node))
-      (let* ((tag (tree-node->data child))
-             (start (and (semantic-tag-p tag)
-                         (semantic-tag-start tag)))
-             (tag-position
-              (cond
-               ((and (markerp start)
-                     (marker-buffer start))
-                (marker-position start))
-               ((integerp start)
-                start))))
-        (when (and tag-position
-                   (<= tag-position position)
-                   (> tag-position best-position))
-          (setq best-tag tag
-                best-position tag-position))))
+    (cl-labels
+        ((walk (node)
+           (let* ((data (tree-node->data node))
+                  (markers (and (listp data)
+                                (nth 4 data)))
+                  (start (and (vectorp markers)
+                              (> (length markers) 0)
+                              (aref markers 0)))
+                  (tag-position
+                   (and (markerp start)
+                        (marker-position start))))
+             (when (and tag-position
+                        (<= tag-position position)
+                        (> tag-position best-position))
+               (setq best-tag data
+                     best-position tag-position))
+             (dolist (child (tree-node->children node))
+               (walk child)))))
+      (walk node))
     best-tag))
 
 (defun my-ecb-highlight-imenu-function (&rest _)
@@ -128,21 +131,22 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
       (with-current-buffer ecb-methods-buffer-name
         (let* ((root (tree-buffer-get-root))
                (children (and root (tree-node->children root)))
-               (tag
-                (when root
-                  (if children
-                      (car
-                       (sort
-                        (delq nil
-                              (mapcar
-                               (lambda (group)
-                                 (my-ecb-find-tag-at-or-before
-                                  group position))
-                               children))
-                        (lambda (a b)
-                          (> (marker-position (semantic-tag-start a))
-                             (marker-position (semantic-tag-start b))))))
-                    (my-ecb-find-tag-at-or-before root position)))))
+               ;; Go: functions are grouped under "func".
+               ;; Other modes: use "Functions" group if present,
+               ;; otherwise search the whole tree.
+               (func-node
+                (or
+                 (seq-find
+                  (lambda (node)
+                    (member
+                     (substring-no-properties
+                      (tree-node->name node))
+                     '("func" "Functions")))
+                  children)
+                 root))
+               (tag (and func-node
+                         (my-ecb-find-tag-at-or-before
+                          func-node position))))
           (if tag
               (tree-buffer-highlight-node-by-data/name tag)
             (tree-buffer-highlight-node-by-data/name nil)))))))
@@ -166,10 +170,30 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
             (list (cons "root" tag-list))))
     tag-list))
 
+(defvar my-ecb-semantic-active-p-count 0)
+
+;; (defun my-ecb-semantic-active-p (&rest _)
+;;   (message "ECB: semantic-active-p overridden")
+;;   nil)
+
+;; (defun my-ecb-install-advice ()
+;;   (message "ECB: installing advice")
+;;   (advice-add 'ecb--semantic-active-p
+;;               :override #'my-ecb-semantic-active-p))
+
+;; (if (featurep 'ecb-method-browser)
+;;     (my-ecb-install-advice)
+;;   (with-eval-after-load 'ecb-method-browser
+;;     (my-ecb-install-advice)))
+
 (with-eval-after-load 'ecb-method-browser
   (advice-add 'ecb-tag-sync
               :after
               #'my-ecb-highlight-imenu-function)
   (advice-add 'ecb-get-tags-for-non-semantic-files
               :around
-              #'my-ecb-get-tags-for-non-semantic-files))
+              #'my-ecb-get-tags-for-non-semantic-files)
+  ;; (advice-add 'ecb--semantic-active-p
+  ;;             :override #'my-ecb-semantic-active-p)
+  )
+
