@@ -130,27 +130,13 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
           (position (point)))
       (with-current-buffer ecb-methods-buffer-name
         (let* ((root (tree-buffer-get-root))
-               (children (and root (tree-node->children root)))
-               ;; Go: functions are grouped under "func".
-               ;; Other modes: use "Functions" group if present,
-               ;; otherwise search the whole tree.
-               (func-node
-                (or
-                 (seq-find
-                  (lambda (node)
-                    (member
-                     (substring-no-properties
-                      (tree-node->name node))
-                     '("func" "Functions")))
-                  children)
-                 root))
-               (tag (and func-node
+               (tag (and root
                          (my-ecb-find-tag-at-or-before
-                          func-node position))))
+                          root
+                          position))))
           (if tag
               (tree-buffer-highlight-node-by-data/name tag)
             (tree-buffer-highlight-node-by-data/name nil)))))))
-
 
 (defun my-speedbar-tag-list-flat-p (tags)
   "Return non-nil if TAGS contains no Speedbar groups."
@@ -172,6 +158,50 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
 
 (defvar my-ecb-semantic-active-p-count 0)
 
+(with-eval-after-load 'ecb-method-browser
+  (advice-add 'ecb-tag-sync
+              :after
+              #'my-ecb-highlight-imenu-function)
+  (advice-add 'ecb-get-tags-for-non-semantic-files
+              :around
+              #'my-ecb-get-tags-for-non-semantic-files))
+
+
+;; variant with nodetype
+;; (defun my-ecb-highlight-imenu-function (&rest _)
+;;   "Highlight the nearest preceding Imenu entry in ECB Methods."
+;;   (when (and (featurep 'ecb)
+;;              (buffer-file-name)
+;;              (boundp 'ecb-methods-buffer-name)
+;;              (get-buffer ecb-methods-buffer-name)
+;;              (not (ecb-methods-get-data-store
+;;                    'semantic-symbol->name-assoc-list)))
+;;     (let ((source-buffer (current-buffer))
+;;           (position (point)))
+;;       (with-current-buffer ecb-methods-buffer-name
+;;         (let* ((root (tree-buffer-get-root))
+;;                (children (and root (tree-node->children root)))
+;;                ;; Go: functions are grouped under "func".
+;;                ;; Other modes: use "Functions" group if present,
+;;                ;; otherwise search the whole tree.
+;;                (func-node
+;;                 (or
+;;                  (seq-find
+;;                   (lambda (node)
+;;                     (member
+;;                      (substring-no-properties
+;;                       (tree-node->name node))
+;;                      '("func" "Functions")))
+;;                   children)
+;;                  root))
+;;                (tag (and func-node
+;;                          (my-ecb-find-tag-at-or-before
+;;                           func-node position))))
+;;           (if tag
+;;               (tree-buffer-highlight-node-by-data/name tag)
+;;             (tree-buffer-highlight-node-by-data/name nil)))))))
+
+
 ;; (defun my-ecb-semantic-active-p (&rest _)
 ;;   (message "ECB: semantic-active-p overridden")
 ;;   nil)
@@ -186,14 +216,6 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
 ;;   (with-eval-after-load 'ecb-method-browser
 ;;     (my-ecb-install-advice)))
 
-(with-eval-after-load 'ecb-method-browser
-  (advice-add 'ecb-tag-sync
-              :after
-              #'my-ecb-highlight-imenu-function)
-  (advice-add 'ecb-get-tags-for-non-semantic-files
-              :around
-              #'my-ecb-get-tags-for-non-semantic-files)
-  ;; (advice-add 'ecb--semantic-active-p
-  ;;             :override #'my-ecb-semantic-active-p)
-  )
 
+;; (advice-add 'ecb--semantic-active-p
+;;             :override #'my-ecb-semantic-active-p)
