@@ -1,0 +1,22 @@
+--- ecb-speedbar.el	2026-10-30 13:18:30.978527625 +0200
++++ /home/kazarian/.emacs.d/elpa/ecb-20260518.524/ecb-speedbar.el	2026-10-29 13:38:48.611561652 +0200
+@@ -524,10 +524,15 @@
+       ;; not, but imenu will do this sometimes - e.g. with cperl) then we do not
+       ;; regrouping with the speedbar-methods of
+       ;; `speedbar-tag-hierarchy-method'!
+-      (when (dolist (tag tag-list t)
+-              (if (or (speedbar-generic-list-positioned-group-p tag)
+-                      (speedbar-generic-list-group-p tag))
+-                  (cl-return nil)))
++      ;; (when (dolist (tag tag-list t)
++      ;;         (if (or (speedbar-generic-list-positioned-group-p tag)
++      ;;                 (speedbar-generic-list-group-p tag))
++      ;;             (cl-return nil)))
++      (unless (seq-some
++               (lambda (tag)
++                 (or (speedbar-generic-list-positioned-group-p tag)
++                     (speedbar-generic-list-group-p tag)))
++               tag-list)
+         (while methods
+           (setq tag-list (funcall (car methods) tag-list)
+                 methods (cdr methods))))
