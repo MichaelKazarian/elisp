@@ -35,7 +35,7 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
       ecb-gzip-setup 'cons
       ecb-history-menu-user-extension-function nil
       ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1
-      ecb-layout-name "left14"
+      ecb-layout-name "left6"
       ecb-methods-menu-user-extension-function nil
       ecb-prescan-directories-for-emptyness nil
       ecb-sources-menu-user-extension-function nil
@@ -93,24 +93,150 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
 ;; Авто-оновлення imenu
 (setq imenu-auto-rescan t)
 
-;;; emacs-rc-ecb.el ends here
+
+;; (defun ecb-get-tags-for-non-semantic-files ()
+;;   "Get a tag-list for current source-file via Speedbar."
+;;   (require 'imenu)
+;;   (if (member major-mode ecb-non-semantic-exclude-modes)
+;;       nil
+;;     (let* ((lst
+;;             (let ((speedbar-dynamic-tags-function-list
+;;                    (if (not (assoc major-mode
+;;                                    ecb-non-semantic-parsing-function))
+;;                        (list (cons 'speedbar-fetch-dynamic-imenu 'identity)
+;;                              (cons 'speedbar-fetch-dynamic-etags 'identity))
+;;                      (list (cons (cdr (assoc major-mode
+;;                                              ecb-non-semantic-parsing-function))
+;;                                  'identity)))))
+;;               (speedbar-fetch-dynamic-tags
+;;                (ecb-buffer-file-name (current-buffer)))))
+;;            (tag-list (cdr lst))
+;;            (methods speedbar-tag-hierarchy-method))
+
+;;       ;; Remove Imenu rescan item.
+;;       (when (and tag-list
+;;                  (ecb-string= (caar tag-list)
+;;                               (car imenu--rescan-item)))
+;;         (setq tag-list (cdr tag-list)))
+
+;;       ;; Wrap flat tag lists in a synthetic root group.
+;;       (when (my-speedbar-tag-list-flat-p tag-list)
+;;         (setq tag-list
+;;               (list (cons "root" tag-list))))
+
+;;       ;; Do not regroup existing groups.
+;;       (unless (seq-some
+;;                (lambda (tag)
+;;                  (or (speedbar-generic-list-positioned-group-p tag)
+;;                      (speedbar-generic-list-group-p tag)))
+;;                tag-list)
+;;         (while methods
+;;           (setq tag-list (funcall (car methods) tag-list)
+;;                 methods (cdr methods))))
+
+;;       tag-list)))
+
+;; (defun my-ecb-tag-position-range (node)
+;;   "Return the position range of NODE's Speedbar tag."
+;;   (let* ((data (tree-node->data node))
+;;          (range (and (listp data) (nth 4 data))))
+;;     (when (and (vectorp range)
+;;                (= (length range) 2))
+;;       (let ((start (aref range 0))
+;;             (end   (aref range 1)))
+;;         (cons
+;;          (cond
+;;           ((markerp start) (marker-position start))
+;;           ((overlayp start) (overlay-start start))
+;;           ((integerp start) start))
+;;          (cond
+;;           ((markerp end) (marker-position end))
+;;           ((overlayp end) (overlay-end end))
+;;           ((integerp end) end)))))))
+
+;; (defun my-ecb-collect-tag-nodes (node)
+;;   "Recursively collect all leaf tag nodes below NODE."
+;;   (let ((children (tree-node->children node)))
+;;     (if children
+;;         (apply #'append
+;;                (mapcar #'my-ecb-collect-tag-nodes children))
+;;       (if (tree-node->data node)
+;;           (list node)
+;;         nil))))
+
+;; (defun my-ecb-find-current-tag (root position)
+;;   "Find the most relevant tag in ROOT for POSITION."
+;;   (let ((best-containing nil)
+;;         (best-containing-size most-positive-fixnum)
+;;         (best-previous nil)
+;;         (best-previous-position -1))
+;;     (dolist (node (my-ecb-collect-tag-nodes root))
+;;       (let* ((range (my-ecb-tag-position-range node))
+;;              (start (car-safe range))
+;;              (end   (cdr-safe range)))
+;;         (when (and start end (<= start position))
+;;           ;; Prefer the smallest range containing point.
+;;           (if (and (<= start position)
+;;                    (<= position end)
+;;                    (< (- end start) best-containing-size))
+;;               (setq best-containing node
+;;                     best-containing-size (- end start)))
+;;           ;; Otherwise remember the nearest preceding tag.
+;;           (when (> start best-previous-position)
+;;             (setq best-previous node
+;;                   best-previous-position start))))
+;;     (or best-containing best-previous))))
+
+;; (defun my-ecb-highlight-imenu-function (&rest _)
+;;   "Highlight the current Imenu tag in ECB Methods."
+;;   (when (and (boundp 'ecb-methods-buffer-name)
+;;              (buffer-live-p (get-buffer ecb-methods-buffer-name)))
+;;     (let ((source-buffer (current-buffer))
+;;           (position (point)))
+;;       (with-current-buffer ecb-methods-buffer-name
+;;         (let* ((root (tree-buffer-get-root))
+;;                (node (and root
+;;                           (my-ecb-find-current-tag root position))))
+;;           (tree-buffer-highlight-node-by-data/name
+;;            (and node (tree-node->data node))))))))
+
+;; (defun my-speedbar-tag-list-flat-p (tags)
+;;   "Return non-nil if TAGS contains no Speedbar groups."
+;;   (and tags
+;;        (not (seq-some
+;;              (lambda (tag)
+;;                (or (speedbar-generic-list-positioned-group-p tag)
+;;                    (speedbar-generic-list-group-p tag)))
+;;              tags))))
+
+;; (with-eval-after-load 'ecb-method-browser
+;;   (advice-add 'ecb-tag-sync
+;;               :after #'my-ecb-highlight-imenu-function))
+
 (defun my-ecb-find-tag-at-or-before (node position)
-  "Find the nearest preceding tag in NODE."
+  "Find the nearest preceding tag among NODE's children."
   (let ((best-tag nil)
         (best-position -1))
     (dolist (child (tree-node->children node))
       (let* ((tag (tree-node->data child))
              (start (and (semantic-tag-p tag)
-                         (semantic-tag-start tag))))
-        (when (and (markerp start)
-                   (<= (marker-position start) position)
-                   (> (marker-position start) best-position))
+                         (semantic-tag-start tag)))
+             (tag-position
+              (cond
+               ((and (markerp start)
+                     (marker-buffer start))
+                (marker-position start))
+               ((integerp start)
+                start))))
+        (when (and tag-position
+                   (<= tag-position position)
+                   (> tag-position best-position))
           (setq best-tag tag
-                best-position (marker-position start)))))
+                best-position tag-position))))
     best-tag))
 
 (defun my-ecb-highlight-imenu-function (&rest _)
-  "Highlight the nearest preceding Imenu function in ECB Methods."
+  "Highlight the nearest preceding Imenu entry in ECB Methods."
   (when (and (featurep 'ecb)
              (buffer-file-name)
              (boundp 'ecb-methods-buffer-name)
@@ -121,24 +247,49 @@ display-buffer-at-bottom' when displaying buffers in the ECB frame."
           (position (point)))
       (with-current-buffer ecb-methods-buffer-name
         (let* ((root (tree-buffer-get-root))
-               (func-node
-                (seq-find
-                 (lambda (node)
-                   (equal (substring-no-properties
-                           (tree-node->name node))
-                          "func"))
-                 (tree-node->children root)))
-               (tag (and func-node
-                         (my-ecb-find-tag-at-or-before
-                          func-node
-                          (with-current-buffer source-buffer
-                            position)))))
+               (children (and root (tree-node->children root)))
+               (tag
+                (when root
+                  (if children
+                      (car
+                       (sort
+                        (delq nil
+                              (mapcar
+                               (lambda (group)
+                                 (my-ecb-find-tag-at-or-before
+                                  group position))
+                               children))
+                        (lambda (a b)
+                          (> (marker-position (semantic-tag-start a))
+                             (marker-position (semantic-tag-start b))))))
+                    (my-ecb-find-tag-at-or-before root position)))))
           (if tag
               (tree-buffer-highlight-node-by-data/name tag)
             (tree-buffer-highlight-node-by-data/name nil)))))))
 
+
+(defun my-speedbar-tag-list-flat-p (tags)
+  "Return non-nil if TAGS contains no Speedbar groups."
+  (and tags
+       (not (seq-some
+             (lambda (tag)
+               (or (speedbar-generic-list-positioned-group-p tag)
+                   (speedbar-generic-list-group-p tag)))
+             tags))))
+
+(defun my-ecb-get-tags-for-non-semantic-files (orig-fun &rest args)
+  "Preserve existing groups and wrap flat tag lists in a root group."
+  (let ((speedbar-tag-hierarchy-method nil)
+        (tag-list (apply orig-fun args)))
+    (when (my-speedbar-tag-list-flat-p tag-list)
+      (setq tag-list
+            (list (cons "root" tag-list))))
+    tag-list))
+
 (with-eval-after-load 'ecb-method-browser
   (advice-add 'ecb-tag-sync
               :after
-              #'my-ecb-highlight-imenu-function))
-
+              #'my-ecb-highlight-imenu-function)
+  (advice-add 'ecb-get-tags-for-non-semantic-files
+              :around
+              #'my-ecb-get-tags-for-non-semantic-files))
